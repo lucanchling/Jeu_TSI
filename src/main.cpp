@@ -67,15 +67,17 @@ static void init()
 
   gui_program_id = glhelper::create_program_from_file("shaders/gui.vert", "shaders/gui.frag"); CHECK_GL_ERROR();
 
-  text_to_draw[0].value = "CPE";
-  text_to_draw[0].bottomLeft = vec2(-0.2, 0.5);
-  text_to_draw[0].topRight = vec2(0.2, 1);
-  init_text(text_to_draw);
+  // Partie affichage de mot à l'écran
 
-  text_to_draw[1]=text_to_draw[0];
-  text_to_draw[1].value = "Lyon";
-  text_to_draw[1].bottomLeft.y = 0.0f;
-  text_to_draw[1].topRight.y = 0.5f;
+  // text_to_draw[0].value = "CPE";
+  // text_to_draw[0].bottomLeft = vec2(-0.2, 0.5);
+  // text_to_draw[0].topRight = vec2(0.2, 1);
+  // init_text(text_to_draw);
+
+  // text_to_draw[1]=text_to_draw[0];
+  // text_to_draw[1].value = "Lyon";
+  // text_to_draw[1].bottomLeft.y = 0.0f;
+  // text_to_draw[1].topRight.y = 0.5f;
 }
 
 /*****************************************************************************\
