@@ -7,13 +7,18 @@
 
 #include "declaration.h"
 
+
+// Importation des différents modules utilisés 
+#include <random>
+#include <iostream>
+
 //identifiant des shaders
 GLuint shader_program_id;
 GLuint gui_program_id;
 
 camera cam;
 
-const int nb_obj = 3;
+const int nb_obj = 25;
 objet3d obj[nb_obj];
 
 const int nb_text = 2;
@@ -36,6 +41,7 @@ static void init()
   init_model_1();
   init_model_2();
   init_model_3();
+  init_model_4();
 
   gui_program_id = glhelper::create_program_from_file("shaders/gui.vert", "shaders/gui.frag"); CHECK_GL_ERROR();
 
@@ -383,4 +389,17 @@ void init_model_3()
   obj[2].prog = shader_program_id;
 
   obj[2].tr.translation = vec3(2.0, 0.0, -10.0);
+}
+
+// Ajout d'autres objets (pour tester la copie)
+void init_model_4() {
+  std::random_device rd;  // Will be used to obtain a seed for the random number engine
+  std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
+  std::uniform_real_distribution<> dis(-10.0, 10.0);
+  for (int i=3;i<25;i++) {
+    obj[i] = obj[0];
+    obj[i].tr.translation = vec3(dis(gen), 0.0, dis(gen));
+
+  }
+
 }
