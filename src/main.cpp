@@ -42,11 +42,13 @@ bool up=false;
 bool down=false;
 bool fps_right=false;
 bool fps_left=false;
+bool jump=false;
 
 //les parametres de translations
 float translation_x=0.0f;
 float translation_y=0.0f;
 float translation_z=-3.0f;
+float d_jump=1.0f;
 /*****************************************************************************\
 * initialisation                                                              *
 \*****************************************************************************/
@@ -137,10 +139,9 @@ static void keyboard_callback(unsigned char key, int, int)
             //cam.tr.translation.x+=dL; 
         right=true;  //rotation avec la touche de droite
         break;
-
-    
-
-    
+    case ' ':
+        jump=true;
+        break;
   }
 }
 
@@ -159,6 +160,17 @@ static void deplacement()
   if (fps_right==true) cam.tr.rotation_euler.y+=d_angle;
 
 }
+
+
+static void sauter()
+{ float hauteur_cam=cam.tr.translation.y;
+  if (jump==true) cam.tr.translation.y+=d_jump;
+  if (jump==false) {
+    if (cam.tr.translation.y!=0) cam.tr.translation.y=d_jump;
+  }
+}
+
+
 
 static void keyboard_relache(unsigned char key, int,int)
 {
@@ -187,6 +199,11 @@ static void keyboard_relache(unsigned char key, int,int)
       break;
     case 'o':
       fps_right = false;
+      break;
+
+    case ' ':
+      std::cout << "j'ai saute" << std::endl;
+      jump = false;
       break;
   }
 }
@@ -221,6 +238,7 @@ static void timer_callback(int)
 {
   glutTimerFunc(10, timer_callback, 0);
   deplacement();
+  sauter();
   glutPostRedisplay();
 
 }
