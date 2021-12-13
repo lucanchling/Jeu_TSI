@@ -11,6 +11,7 @@
 // Importation des différents modules utilisés 
 #include <random>
 #include <iostream>
+#include <cstdlib>
 
 //identifiant des shaders
 GLuint shader_program_id;
@@ -523,8 +524,12 @@ void init_model_4() {
   std::uniform_real_distribution<> dis(-10.0, 10.0);
   for (int i=3;i<25;i++) {
     obj[i] = obj[0];
+
+    // Positionnement aléatoire des dinos 
     obj[i].tr.translation = vec3(dis(gen), 0.0, dis(gen));
 
+    // Rotation aléatoire des dinos
+    obj[i].tr.rotation_euler.y = rand()/(float)RAND_MAX*2*M_PI;
   }
 
 }
