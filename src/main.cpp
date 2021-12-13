@@ -20,6 +20,26 @@ const int nb_text = 2;
 text text_to_draw[nb_text];
 
 
+
+
+/************************************************************************\
+* variables globales*
+\*************************************************************************/
+float d_angle=0.1f;
+float angle_x=0.0f;
+float angle_y=0.0f;
+float dL=0.05f;      //deplacement de translation
+
+//boolean crees pour gerer le deplacement
+bool left=false;
+bool right=false;
+bool up=false;
+bool down=false;
+
+//les parametres de translations
+float translation_x=0.0f;
+float translation_y=0.0f;
+float translation_z=-3.0f;
 /*****************************************************************************\
 * initialisation                                                              *
 \*****************************************************************************/
@@ -65,6 +85,8 @@ static void init()
     draw_text(text_to_draw + i);
 
   glutSwapBuffers();
+
+
 }
 
 /*****************************************************************************\
@@ -77,19 +99,96 @@ static void keyboard_callback(unsigned char key, int, int)
     case 'p':
       glhelper::print_screen();
       break;
-    case 'q':
+    //case 'q':
     case 'Q':
     case 27:
       exit(0);
       break;
+    case 'i':
+      angle_x=angle_x+d_angle;
+      break;
+    case 'z':
+            //cam.tr.translation.z-=dL;
+        up=true;  //rotation avec la touche du haut
+        break;
+    case 's':
+            //cam.tr.translation.z+=dL; 
+        down=true;  //rotation avec la touche du bas
+        break;
+    case 'q':
+              //cam.tr.translation.x-=dL; 
+        left=true;  //rotation avec la touche de gauche
+        break;
+    case 'd':
+            //cam.tr.translation.x+=dL; 
+        right=true;  //rotation avec la touche de droite
+        break;
+
+    
+
+    
   }
 }
 
 /*****************************************************************************\
-* special_callback                                                            *
+* fonction pour éviter le temps de latence au début                           *
 \*****************************************************************************/
-static void special_callback(int key, int, int)
+
+static void deplacement() 
 {
+
+  if (left==true) cam.tr.translation.x-=dL;
+  if (right==true) cam.tr.translation.x+=dL;
+  if (up==true) cam.tr.translation.z-=dL;
+  if (down==true) cam.tr.translation.z+=dL;
+
+}
+
+static void special_relache(unsigned char key, int,int)
+{
+
+  switch (key)
+  {
+    case 'z':
+      //translation_y+=dL; //rotation avec la touche du haut
+      //std::cout << "relache" << std::endl; //test pour voir si la fonction relache est bien appelé
+      up = false;
+      break;
+    case 's':
+      //translation_y-=dL; //rotation avec la touche du bas
+      down = false;
+      break;
+    case 'q':
+      //translation_x-=dL; //rotation avec la touche de gauche
+      left = false;
+      break;
+    case 'd':
+      //translation_x+=dL; //rotation avec la touche de droite
+      right = false;
+      break;
+  }
+}
+/*****************************************************************************\
+* keyboard_callback                                                            *
+\*****************************************************************************/
+static void keyboard_callback(int key, int, int)
+{
+  switch (key)
+  {
+
+    case GLUT_KEY_UP:
+
+        break;
+      case GLUT_KEY_DOWN:
+
+       break;
+     case GLUT_KEY_LEFT:
+
+       break;
+     case GLUT_KEY_RIGHT:
+
+       break;
+  }
 }
 
 
@@ -99,8 +198,15 @@ static void special_callback(int key, int, int)
 static void timer_callback(int)
 {
   glutTimerFunc(25, timer_callback, 0);
+  deplacement();
   glutPostRedisplay();
+
 }
+
+
+
+
+
 
 /*****************************************************************************\
 * main                                                                         *
@@ -113,9 +219,12 @@ int main(int argc, char** argv)
   glutCreateWindow("OpenGL");
 
   glutDisplayFunc(display_callback);
+  glutKeyboardUpFunc(special_relache);
   glutKeyboardFunc(keyboard_callback);
-  glutSpecialFunc(special_callback);
+  glutSpecialFunc(keyboard_callback);
+
   glutTimerFunc(25, timer_callback, 0);
+
 
   glewExperimental = true;
   glewInit();

@@ -13,6 +13,7 @@ uniform mat4 rotation_view;
 uniform vec4 rotation_center_view;
 uniform vec4 translation_view;
 
+
 uniform mat4 projection;
 
 out vec3 coordonnee_3d;
