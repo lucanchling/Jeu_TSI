@@ -40,6 +40,8 @@ bool left=false;
 bool right=false;
 bool up=false;
 bool down=false;
+bool fps_right=false;
+bool fps_left=false;
 
 //les parametres de translations
 float translation_x=0.0f;
@@ -111,8 +113,12 @@ static void keyboard_callback(unsigned char key, int, int)
       exit(0);
       break;
     case 'i':
-      angle_x=angle_x+d_angle;
-      break;
+        fps_left=true;  //provisoire camera fps tourne à gauche
+        break;
+    case 'o':
+        fps_right=true;   //provisoire camera fps tourne à droite
+        break;
+    
     case 'z':
             //cam.tr.translation.z-=dL;
         up=true;  //rotation avec la touche du haut
@@ -147,10 +153,12 @@ static void deplacement()
   if (right==true) cam.tr.translation.x+=dL;
   if (up==true) cam.tr.translation.z-=dL;
   if (down==true) cam.tr.translation.z+=dL;
+  if (fps_left==true) cam.tr.rotation_euler.y-=d_angle; 
+  if (fps_right==true) cam.tr.rotation_euler.y+=d_angle;
 
 }
 
-static void special_relache(unsigned char key, int,int)
+static void keyboard_relache(unsigned char key, int,int)
 {
 
   switch (key)
@@ -172,12 +180,18 @@ static void special_relache(unsigned char key, int,int)
       //translation_x+=dL; //rotation avec la touche de droite
       right = false;
       break;
+    case 'i':
+      fps_left = false;
+      break;
+    case 'o':
+      fps_right = false;
+      break;
   }
 }
 /*****************************************************************************\
-* keyboard_callback                                                            *
+* special_callback                                                            *
 \*****************************************************************************/
-static void keyboard_callback(int key, int, int)
+static void special_callback(int key, int, int)
 {
   switch (key)
   {
@@ -203,7 +217,7 @@ static void keyboard_callback(int key, int, int)
 \*****************************************************************************/
 static void timer_callback(int)
 {
-  glutTimerFunc(25, timer_callback, 0);
+  glutTimerFunc(10, timer_callback, 0);
   deplacement();
   glutPostRedisplay();
 
@@ -225,9 +239,9 @@ int main(int argc, char** argv)
   glutCreateWindow("OpenGL");
 
   glutDisplayFunc(display_callback);
-  glutKeyboardUpFunc(special_relache);
+  glutKeyboardUpFunc(keyboard_relache);
   glutKeyboardFunc(keyboard_callback);
-  glutSpecialFunc(keyboard_callback);
+  glutSpecialFunc(special_callback);
 
   glutTimerFunc(25, timer_callback, 0);
 
