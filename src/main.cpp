@@ -165,9 +165,9 @@ static void deplacement()
 
 static void sauter()
 { float hauteur_cam=cam.tr.translation.y;
-  if (jump==true) cam.tr.translation.y+=d_jump;
+  if (jump==true && cam.tr.translation.y<15.0f) cam.tr.translation.y+=d_jump;
   if (jump==false) {
-    if (cam.tr.translation.y!=0) cam.tr.translation.y=d_jump;
+    if (cam.tr.translation.y>d_jump) cam.tr.translation.y-=d_jump;
   }
 }
 
@@ -204,6 +204,7 @@ static void keyboard_relache(unsigned char key, int,int)
 
     case ' ':
       std::cout << "j'ai saute" << std::endl;
+      std::cout << cam.tr.translation.y << std::endl;
       jump = false;
       break;
   }
@@ -241,7 +242,7 @@ static void timer_callback(int)
   deplacement();
   sauter();
   glutPostRedisplay();
-
+     
 }
 
 
