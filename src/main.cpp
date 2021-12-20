@@ -50,6 +50,10 @@ bool fps_right=false;
 bool fps_left=false;
 bool jump=false;
 
+// Position de la caméra - pour actualiser la position de son centre de rotation
+float cam_posX = 0.0f;
+float cam_posZ = 0.0f;
+
 //les parametres de translations
 float translation_x=0.0f;
 float translation_y=0.0f;
@@ -160,10 +164,22 @@ static void keyboard_callback(unsigned char key, int, int)
 static void deplacement() 
 {
 
-  if (left==true) cam.tr.translation.x-=dL;
-  if (right==true) cam.tr.translation.x+=dL;
-  if (up==true) cam.tr.translation.z-=dL;
-  if (down==true) cam.tr.translation.z+=dL;
+  if (left==true) {
+    cam.tr.translation.x-=dL;
+    cam_posX -= dL;
+    }
+  if (right==true) {
+    cam.tr.translation.x+=dL;
+    cam_posX += dL;
+    }
+  if (up==true) {
+    cam.tr.translation.z-=dL;
+    cam_posZ -= dL;
+    }
+  if (down==true) {
+    cam.tr.translation.z+=dL;
+    cam_posZ += dL;
+    }
 
   // Déplacement sur l'axe des Y pour tester la scène avant implémentation des mouvements de souris 
   if (fps_left==true) cam.tr.rotation_euler.y-=d_angle; 
@@ -258,13 +274,17 @@ static void mouse_cursor(int x, int y) {
   if (capture) {
     int tempX = x;
     int tempY = HEIGHT - y;
+    
+    
     cam.tr.rotation_euler.y -= 0.001f * d_angle * 2*M_PI*float(HEIGHT / 2 - tempX);
     cam.tr.rotation_euler.x += 0.001f * d_angle * 2*M_PI*float(WIDTH / 2 - tempY);
     
+    //printf("x = %d\ty = %d\n",x,y);
+    //printf("WIDTH = %d  HEIGTH = %d\n",WIDTH,HEIGHT);
+    
     glutWarpPointer(WIDTH / 2, HEIGHT / 2); //  Pour ramener le pointeur au centre de la fenêtre
     
-    //printf("x = %d\ty = %d\n",tempX,tempY);
-    //printf("x = %d\ty = %d\n",x,y);
+    
   }
 };
 
@@ -283,6 +303,11 @@ static void timer_callback(int)
   glutPostRedisplay();
   size_actualisation();
   change_capture();
+  
+  /*
+  // Réactualisation du centre de rotation de la caméra
+  cam.tr.rotation_center = vec3(cam_posX, 2.0f, cam_posZ);
+  */  
 }
 
 
