@@ -37,6 +37,10 @@ float angle_x=0.0f;
 float angle_y=0.0f;
 float dL=0.05f;      //deplacement de translation
 
+// Pour la taille de la window - Pour permettre de les actualiser in real time 
+int WIDTH = 600;
+int HEIGHT = 600;
+
 //boolean crees pour gerer le deplacement
 bool left=false;
 bool right=false;
@@ -237,6 +241,14 @@ static void special_callback(int key, int, int)
   }
 }
 
+/*****************************************************************************\
+* Réactualisation de la taille de la fenêtre in real time                     *
+\*****************************************************************************/
+static void size_actualisation() {
+  WIDTH = glutGet(GLUT_WINDOW_WIDTH);
+  HEIGHT = glutGet(GLUT_WINDOW_HEIGHT);
+  // printf("WIDTH = %d  HEIGTH = %d\n",WIDTH,HEIGHT);
+}
 
 /*****************************************************************************\
 * timer_callback                                                              *
@@ -247,6 +259,7 @@ static void timer_callback(int)
   deplacement();
   sauter();
   glutPostRedisplay();
+  size_actualisation();
      
 }
 
@@ -262,7 +275,7 @@ int main(int argc, char** argv)
 {
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | MACOSX_COMPATIBILITY);
-  glutInitWindowSize(600, 600);
+  glutInitWindowSize(WIDTH, HEIGHT);
   glutCreateWindow("OpenGL");
 
   glutDisplayFunc(display_callback);
