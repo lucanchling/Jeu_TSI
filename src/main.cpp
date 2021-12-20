@@ -19,6 +19,7 @@ GLuint gui_program_id;
 
 camera cam;
 
+// Pour donner le nombre d'objets présents au total
 const int nb_obj = 25;
 objet3d obj[nb_obj];
 
@@ -68,8 +69,10 @@ static void init()
   init_model_3();
   init_model_4();
 
-  gui_program_id = glhelper::create_program_from_file("shaders/gui.vert", "shaders/gui.frag"); CHECK_GL_ERROR();
+  // Pour supprimer le curseur à l'écran
+  glutSetCursor(GLUT_CURSOR_NONE);
 
+  gui_program_id = glhelper::create_program_from_file("shaders/gui.vert", "shaders/gui.frag"); CHECK_GL_ERROR();
   // Partie affichage de mot à l'écran
 
   // text_to_draw[0].value = "CPE";
@@ -157,6 +160,8 @@ static void deplacement()
   if (right==true) cam.tr.translation.x+=dL;
   if (up==true) cam.tr.translation.z-=dL;
   if (down==true) cam.tr.translation.z+=dL;
+
+  // Déplacement sur l'axe des Y pour tester la scène avant implémentation des mouvements de souris 
   if (fps_left==true) cam.tr.rotation_euler.y-=d_angle; 
   if (fps_right==true) cam.tr.rotation_euler.y+=d_angle;
 
