@@ -251,6 +251,28 @@ static void size_actualisation() {
 }
 
 /*****************************************************************************\
+* Rotation via l'utilisation de la souris                                     *
+\*****************************************************************************/
+bool capture = false; // flag pour remettre à zero ou non les coord
+static void mouse_cursor(int x, int y) { 
+  if (capture) {
+    int tempX = x;
+    int tempY = HEIGHT - y;
+    cam.tr.rotation_euler.y -= 0.001f * d_angle * 2*M_PI*float(HEIGHT / 2 - tempX);
+    cam.tr.rotation_euler.x += 0.001f * d_angle * 2*M_PI*float(WIDTH / 2 - tempY);
+    
+    glutWarpPointer(WIDTH / 2, HEIGHT / 2); //  Pour ramener le pointeur au centre de la fenêtre
+    
+    //printf("x = %d\ty = %d\n",tempX,tempY);
+    //printf("x = %d\ty = %d\n",x,y);
+  }
+};
+
+// gestion du flag pour ne pas faire le refresh h24
+static void change_capture() {
+  capture = !capture;
+}
+/*****************************************************************************\
 * timer_callback                                                              *
 \*****************************************************************************/
 static void timer_callback(int)
@@ -260,7 +282,7 @@ static void timer_callback(int)
   sauter();
   glutPostRedisplay();
   size_actualisation();
-     
+  change_capture();
 }
 
 
@@ -282,6 +304,11 @@ int main(int argc, char** argv)
   glutKeyboardUpFunc(keyboard_relache);
   glutKeyboardFunc(keyboard_callback);
   glutSpecialFunc(special_callback);
+  
+  // gestion de la souris
+  //glutMouseFunc(glutMouseFunc);
+  glutPassiveMotionFunc(mouse_cursor);
+
 
   glutTimerFunc(25, timer_callback, 0);
 
