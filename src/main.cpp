@@ -284,6 +284,7 @@ static void mouse_cursor(int x, int y) {
     // Pour actualiser l'orientation de la caméra
     cam_orientation -= (0.001f * d_angle * 2*M_PI*float(HEIGHT / 2 - tempX)); 
     cam_orientation = fmod(cam_orientation,2*M_PI);
+    if (cam_orientation < 0) cam_orientation = 2*M_PI - abs(cam_orientation); 
     
     //cam.tr.rotation_euler.x += 0.001f * d_angle * 2*M_PI*float(WIDTH / 2 - tempY);
     
