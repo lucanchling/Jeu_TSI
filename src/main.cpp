@@ -72,8 +72,7 @@ static void init()
 
   cam.projection = matrice_projection(60.0f*M_PI/180.0f,1.0f,0.01f,100.0f);
   cam.tr.translation = vec3(0.0f, 1.0f, 0.0f);
-  // cam.tr.translation = vec3(0.0f, 20.0f, 0.0f);
-  // cam.tr.rotation_center = vec3(0.0f, 20.0f, 0.0f);
+  cam.tr.rotation_center = vec3(0.0f, 1.0f, 0.0f);
   // cam.tr.rotation_euler = vec3(M_PI/2., 0.0f, 0.0f);
 
   init_model_1();
@@ -305,15 +304,15 @@ static void mouse_cursor(int x, int y) {
     
     // Pour actualiser l'orientation de la caméra
     cam_orientation -= (0.001f * d_angle * 2*M_PI*float(HEIGHT / 2 - tempX)); 
-    cam_orientation = fmod(cam_orientation,2*M_PI);
-    if (cam_orientation < 0) cam_orientation = 2*M_PI - abs(cam_orientation); 
+    cam_orientation = fmod(cam_orientation,2*M_PI); // Modulo 2pi 
+    if (cam_orientation < 0) cam_orientation = 2*M_PI - abs(cam_orientation); // Same value peut importe le sens d'orientation (gauche ou droite)
     
-    //cam.tr.rotation_euler.x += 0.001f * d_angle * 2*M_PI*float(WIDTH / 2 - tempY);
+    cam.tr.rotation_euler.x += 0.001f * d_angle * 2*M_PI*float(WIDTH / 2 - tempY);
     
     glutWarpPointer(WIDTH / 2, HEIGHT / 2); //  Pour ramener le pointeur au centre de la fenêtre
     
     // Mise à jour du centre de rotation de la caméra
-    //cam.tr.rotation_center = vec3(cam_posX, 1.0f, cam_posZ);
+    cam.tr.rotation_center = vec3(cam_posX, 2.0f, cam_posZ);
     
     //printf("x = %d\ty = %d\n",x,y);
     //printf("WIDTH = %d  HEIGTH = %d\n",WIDTH,HEIGHT);
@@ -340,10 +339,11 @@ static void timer_callback(int)
   change_capture();
   printf("posx = %f\tposz = %f\t orient = %f\n",cam_posX,cam_posZ,cam_orientation);
   
-  /*
-  // Réactualisation du centre de rotation de la caméra
-  cam.tr.rotation_center = vec3(cam_posX, 2.0f, cam_posZ);
-  */  
+
+  
+  // // Réactualisation du centre de rotation de la caméra
+  // cam.tr.rotation_center = vec3(cam_posX, 2.0f, cam_posZ);
+    
 }
 
 
