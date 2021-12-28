@@ -54,11 +54,15 @@ bool jump=false;
 float cam_posX = 0.0f;
 float cam_posZ = 0.0f;
 
+// Orientation de la caméra pour déterminer une position réelle de la caméra
+float cam_orientation = 0.0f;
+
 //les parametres de translations
 float translation_x=0.0f;
 float translation_y=0.0f;
 float translation_z=-3.0f;
 float d_jump=1.0f;
+
 /*****************************************************************************\
 * initialisation                                                              *
 \*****************************************************************************/
@@ -174,11 +178,11 @@ static void deplacement()
     }
   if (up==true) {
     cam.tr.translation.z-=dL;
-    cam_posZ -= dL;
+    cam_posZ += dL;
     }
   if (down==true) {
     cam.tr.translation.z+=dL;
-    cam_posZ += dL;
+    cam_posZ -= dL;
     }
 
   // Déplacement sur l'axe des Y pour tester la scène avant implémentation des mouvements de souris 
@@ -277,12 +281,20 @@ static void mouse_cursor(int x, int y) {
     
     
     cam.tr.rotation_euler.y -= 0.001f * d_angle * 2*M_PI*float(HEIGHT / 2 - tempX);
-    cam.tr.rotation_euler.x += 0.001f * d_angle * 2*M_PI*float(WIDTH / 2 - tempY);
+    // Pour actualiser l'orientation de la caméra
+    cam_orientation -= (0.001f * d_angle * 2*M_PI*float(HEIGHT / 2 - tempX)); 
+    cam_orientation = fmod(cam_orientation,2*M_PI);
+    
+    //cam.tr.rotation_euler.x += 0.001f * d_angle * 2*M_PI*float(WIDTH / 2 - tempY);
+    
+    glutWarpPointer(WIDTH / 2, HEIGHT / 2); //  Pour ramener le pointeur au centre de la fenêtre
+    
+    // Mise à jour du centre de rotation de la caméra
+    //cam.tr.rotation_center = vec3(cam_posX, 1.0f, cam_posZ);
     
     //printf("x = %d\ty = %d\n",x,y);
     //printf("WIDTH = %d  HEIGTH = %d\n",WIDTH,HEIGHT);
     
-    glutWarpPointer(WIDTH / 2, HEIGHT / 2); //  Pour ramener le pointeur au centre de la fenêtre
     
     
   }
@@ -303,6 +315,7 @@ static void timer_callback(int)
   glutPostRedisplay();
   size_actualisation();
   change_capture();
+  printf("posx = %f\tposz = %f\t orient = %f\n",cam_posX,cam_posZ,cam_orientation);
   
   /*
   // Réactualisation du centre de rotation de la caméra
