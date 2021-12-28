@@ -165,25 +165,46 @@ static void keyboard_callback(unsigned char key, int, int)
 * fonction pour éviter le temps de latence au début                           *
 \*****************************************************************************/
 
+// Cette fonction permet aussi l'actualisation de la position de la caméra
 static void deplacement() 
 {
 
-  if (left==true) {
+  if (left) {
     cam.tr.translation.x-=dL;
-    cam_posX -= dL;
+    // Partie réactualisation de la position de la caméra
+    if (cam_orientation == 0) cam_posX -= dL;
+    else {
+      cam_posX -= dL*cos(cam_orientation);
+      cam_posZ += dL*sin(cam_orientation);
     }
-  if (right==true) {
+  }
+  if (right) {
     cam.tr.translation.x+=dL;
-    cam_posX += dL;
+    // Partie réactualisation de la position de la caméra
+    if (cam_orientation == 0) cam_posX += dL;
+    else {
+      cam_posX += dL*cos(cam_orientation);
+      cam_posZ -= dL*sin(cam_orientation);
     }
-  if (up==true) {
+  }
+  if (up) {
     cam.tr.translation.z-=dL;
-    cam_posZ += dL;
+    // Partie réactualisation de la position de la caméra
+    if (cam_orientation == 0) cam_posZ += dL;
+    else {
+      cam_posX += dL*cos(cam_orientation);
+      cam_posZ += dL*sin(cam_orientation);
     }
-  if (down==true) {
+  }
+  if (down) {
     cam.tr.translation.z+=dL;
-    cam_posZ -= dL;
+    // Partie réactualisation de la position de la caméra
+    if (cam_orientation == 0) cam_posZ -= dL;
+    else {
+      cam_posX -= dL*cos(cam_orientation);
+      cam_posZ -= dL*sin(cam_orientation);
     }
+  }
 
   // Déplacement sur l'axe des Y pour tester la scène avant implémentation des mouvements de souris 
   if (fps_left==true) cam.tr.rotation_euler.y-=d_angle; 
@@ -281,6 +302,7 @@ static void mouse_cursor(int x, int y) {
     
     
     cam.tr.rotation_euler.y -= 0.001f * d_angle * 2*M_PI*float(HEIGHT / 2 - tempX);
+    
     // Pour actualiser l'orientation de la caméra
     cam_orientation -= (0.001f * d_angle * 2*M_PI*float(HEIGHT / 2 - tempX)); 
     cam_orientation = fmod(cam_orientation,2*M_PI);
