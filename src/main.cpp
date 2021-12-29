@@ -49,6 +49,7 @@ bool down=false;
 bool fps_right=false;
 bool fps_left=false;
 bool jump=false;
+bool dodge=false;
 
 // Position de la caméra - pour actualiser la position de son centre de rotation
 float cam_posX = 0.0f;
@@ -157,6 +158,10 @@ static void keyboard_callback(unsigned char key, int, int)
     case ' ':
         jump=true;
         break;
+
+    case 'm':
+        dodge=true;
+        break;
   }
 }
 
@@ -169,7 +174,8 @@ static void deplacement()
 {
 
   if (left) {
-    cam.tr.translation.x-=dL;
+    if(dodge)cam.tr.translation.x-=2*dL;
+    else cam.tr.translation.x-=dL;
     // Partie réactualisation de la position de la caméra
     if (cam_orientation == 0) cam_posX -= dL;
     else {
@@ -178,7 +184,8 @@ static void deplacement()
     }
   }
   if (right) {
-    cam.tr.translation.x+=dL;
+    if(dodge)cam.tr.translation.x+=2*dL;
+    else cam.tr.translation.x+=dL;
     // Partie réactualisation de la position de la caméra
     if (cam_orientation == 0) cam_posX += dL;
     else {
@@ -187,7 +194,8 @@ static void deplacement()
     }
   }
   if (up) {
-    cam.tr.translation.z-=dL;
+    if (dodge)cam.tr.translation.z-=2*dL;
+    else cam.tr.translation.z-=dL;
     // Partie réactualisation de la position de la caméra
     if (cam_orientation == 0) cam_posZ += dL;
     else {
@@ -196,7 +204,8 @@ static void deplacement()
     }
   }
   if (down) {
-    cam.tr.translation.z+=dL;
+    if (dodge)cam.tr.translation.z+=2*dL;
+    else cam.tr.translation.z+=dL;
     // Partie réactualisation de la position de la caméra
     if (cam_orientation == 0) cam_posZ -= dL;
     else {
@@ -255,6 +264,10 @@ static void keyboard_relache(unsigned char key, int,int)
       std::cout << "j'ai saute" << std::endl;
       std::cout << cam.tr.translation.y << std::endl;
       jump = false;
+      break;
+
+    case 'm':
+      dodge=false;
       break;
   }
 }
