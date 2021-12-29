@@ -156,11 +156,11 @@ static void keyboard_callback(unsigned char key, int, int)
         right=true;  //rotation avec la touche de droite
         break;
     case ' ':
-        jump=true;
+        jump=true;  //sauter donc translation en y
         break;
 
     case 'm':
-        dodge=true;
+        dodge=true; //esquiver donc la translation en x ou en z est plus importante si la touche m est enfoncée
         break;
   }
 }
@@ -174,7 +174,7 @@ static void deplacement()
 {
 
   if (left) {
-    if(dodge)cam.tr.translation.x-=2*dL;
+    if(dodge)cam.tr.translation.x-=2*dL;        //test pour savoir si l'esquive est souhaitée ou non
     else cam.tr.translation.x-=dL;
     // Partie réactualisation de la position de la caméra
     if (cam_orientation == 0) cam_posX -= dL;
@@ -184,7 +184,7 @@ static void deplacement()
     }
   }
   if (right) {
-    if(dodge)cam.tr.translation.x+=2*dL;
+    if(dodge)cam.tr.translation.x+=2*dL;        //test pour savoir si l'esquive est souhaitée ou non
     else cam.tr.translation.x+=dL;
     // Partie réactualisation de la position de la caméra
     if (cam_orientation == 0) cam_posX += dL;
@@ -194,7 +194,7 @@ static void deplacement()
     }
   }
   if (up) {
-    if (dodge)cam.tr.translation.z-=2*dL;
+    if (dodge)cam.tr.translation.z-=2*dL;       //test pour savoir si l'esquive est souhaitée ou non
     else cam.tr.translation.z-=dL;
     // Partie réactualisation de la position de la caméra
     if (cam_orientation == 0) cam_posZ += dL;
@@ -204,7 +204,7 @@ static void deplacement()
     }
   }
   if (down) {
-    if (dodge)cam.tr.translation.z+=2*dL;
+    if (dodge)cam.tr.translation.z+=2*dL;       //test pour savoir si l'esquive est souhaitée ou non
     else cam.tr.translation.z+=dL;
     // Partie réactualisation de la position de la caméra
     if (cam_orientation == 0) cam_posZ -= dL;
