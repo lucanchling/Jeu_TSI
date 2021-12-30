@@ -159,7 +159,7 @@ static void keyboard_callback(unsigned char key, int, int)
         jump=true;  //sauter donc translation en y
         break;
 
-    case 'm':
+    case 'c':
         dodge=true; //esquiver donc la translation en x ou en z est plus importante si la touche m est enfoncée
         break;
   }
@@ -266,7 +266,7 @@ static void keyboard_relache(unsigned char key, int,int)
       jump = false;
       break;
 
-    case 'm':
+    case 'c':
       dodge=false;
       break;
   }
@@ -293,6 +293,34 @@ static void special_callback(int key, int, int)
        break;
   }
 }
+
+
+
+
+struct Sphere
+{
+  float x,y,z;
+  float rayon;
+};
+
+static bool Collision(Sphere S1,Sphere S2)
+{
+   int d2 = (S1.x-S2.x)*(S1.x-S2.x) + (S1.y-S2.y)*(S1.y-S2.y) + (S1.z-S2.z)*(S1.z-S2.z);
+   if (d2 > (S1.rayon + S2.rayon)*(S1.rayon + S2.rayon)){
+     std::cout << "j'ai pas touche" << std::endl; 
+     return false;
+
+   } 
+
+   else {
+     std::cout << "j'ai touche" << std::endl;
+     return true;
+     
+   }
+}
+
+
+
 
 /*****************************************************************************\
 * Réactualisation de la taille de la fenêtre in real time                     *
@@ -344,13 +372,25 @@ static void change_capture() {
 \*****************************************************************************/
 static void timer_callback(int)
 {
+  Sphere camera;
+  camera.x= cam.tr.translation.x;
+  camera.y= cam.tr.translation.y;
+  camera.z= cam.tr.translation.z;
+  camera.rayon= 0.5f;
+
+  Sphere armadillo;
+  armadillo.x=obj[2].tr.translation.x;
+  armadillo.y=obj[2].tr.translation.y;
+  armadillo.z=obj[2].tr.translation.z;
+  armadillo.rayon=0.5f;
   glutTimerFunc(10, timer_callback, 0);
   deplacement();
   sauter();
+  Collision(camera,armadillo);
   glutPostRedisplay();
   size_actualisation();
   change_capture();
-  printf("posx = %f\tposz = %f\t orient = %f\n",cam_posX,cam_posZ,cam_orientation);
+  //printf("posx = %f\tposz = %f\t orient = %f\n",cam_posX,cam_posZ,cam_orientation);
   
 
   
@@ -358,7 +398,6 @@ static void timer_callback(int)
   // cam.tr.rotation_center = vec3(cam_posX, 2.0f, cam_posZ);
     
 }
-
 
 
 
@@ -374,11 +413,18 @@ int main(int argc, char** argv)
   glutInitWindowSize(WIDTH, HEIGHT);
   glutCreateWindow("OpenGL");
 
+
   glutDisplayFunc(display_callback);
   glutKeyboardUpFunc(keyboard_relache);
   glutKeyboardFunc(keyboard_callback);
   glutSpecialFunc(special_callback);
+
+
   
+
+
+
+
   // gestion de la souris
   //glutMouseFunc(glutMouseFunc);
   glutPassiveMotionFunc(mouse_cursor);
