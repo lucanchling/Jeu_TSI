@@ -402,6 +402,17 @@ static void timer_callback(int)
       struc[i-3].rayon=0.5f;
       Collision(camera,struc[i-3]);
       if (Collision(camera,struc[i-3]))      std::cout << "j'ai touche" << std::endl; //test d'une collision
+      while ((Collision(struc[i-3], steg))||(Collision(struc[i-3],armadillo))){
+            std::random_device rd;  // Will be used to obtain a seed for the random number engine
+            std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
+            std::uniform_real_distribution<> dis(-10.0, 10.0);
+            // Positionnement aléatoire des dinos 
+            obj[i].tr.translation = vec3(dis(gen), 0.0, dis(gen));
+
+            // Rotation aléatoire des dinos
+            obj[i].tr.rotation_euler.y = rand()/(float)RAND_MAX*2*M_PI;
+
+      }
     }
 
   
