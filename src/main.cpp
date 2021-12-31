@@ -297,6 +297,7 @@ static void special_callback(int key, int, int)
 
 
 
+//structure de base d'une sphère pour les collisions entre les différents personnages
 struct Sphere
 {
   float x,y,z;
@@ -372,26 +373,26 @@ static void change_capture() {
 \*****************************************************************************/
 static void timer_callback(int)
 {
-  Sphere camera;
+  Sphere camera;                      //je crée la sphere de la camera pour les collisions
   camera.x= cam.tr.translation.x;
   camera.y= cam.tr.translation.y;
   camera.z= cam.tr.translation.z;
   camera.rayon= 0.5f;
 
-  Sphere armadillo;
+  Sphere armadillo;                   //je crée la sphere de l'armadillo blanc pour les collisions
   armadillo.x=obj[2].tr.translation.x;
   armadillo.y=obj[2].tr.translation.y;
   armadillo.z=obj[2].tr.translation.z;
   armadillo.rayon=0.5f;
 
 
-  Sphere steg;
+  Sphere steg;                        //je crée la sphere du premier steg pour les collisions
   steg.x=obj[0].tr.translation.x;
   steg.y=obj[0].tr.translation.y;
   steg.z=obj[0].tr.translation.z;
   steg.rayon=0.5f;
 
-
+  //ici je crée une boucle for pour crée des sphères pour chaque stegausors
   char struc[][22]={"steg3","steg4","steg5","steg6","steg7","steg8","steg9","steg10","steg11","steg12","steg13","steg14","steg15","steg16","steg17","steg18","steg19","steg20","steg21","steg22","steg23","steg24"};
     for (int i=3;i<25;i++) {
       Sphere struc[i-3];
@@ -400,7 +401,7 @@ static void timer_callback(int)
       struc[i-3].z=obj[i].tr.translation.z;
       struc[i-3].rayon=0.5f;
       Collision(camera,struc[i-3]);
-      if (Collision(camera,struc[i-3]))      std::cout << "j'ai touche" << std::endl;
+      if (Collision(camera,struc[i-3]))      std::cout << "j'ai touche" << std::endl; //test d'une collision
     }
 
   
@@ -408,9 +409,9 @@ static void timer_callback(int)
   deplacement();
   sauter();
   Collision(camera,armadillo);
-  if (Collision(camera,armadillo))      std::cout << "j'ai touche armadillo" << std::endl;
+  if (Collision(camera,armadillo))      std::cout << "j'ai touche armadillo" << std::endl;  //test d'une collision
   Collision(camera,steg);
-  if (Collision(camera,steg))      std::cout << "j'ai touche steg" << std::endl;
+  if (Collision(camera,steg))      std::cout << "j'ai touche steg" << std::endl;  //test d'une collision
   
   glutPostRedisplay();
   size_actualisation();
