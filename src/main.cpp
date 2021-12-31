@@ -307,13 +307,13 @@ static bool Collision(Sphere S1,Sphere S2)
 {
    int d2 = (S1.x-S2.x)*(S1.x-S2.x) + (S1.y-S2.y)*(S1.y-S2.y) + (S1.z-S2.z)*(S1.z-S2.z);
    if (d2 > (S1.rayon + S2.rayon)*(S1.rayon + S2.rayon)){
-     std::cout << "j'ai pas touche" << std::endl; 
+     //std::cout << "j'ai pas touche" << std::endl; 
      return false;
 
    } 
 
    else {
-     std::cout << "j'ai touche" << std::endl;
+     //std::cout << "j'ai touche" << std::endl;
      return true;
      
    }
@@ -383,10 +383,35 @@ static void timer_callback(int)
   armadillo.y=obj[2].tr.translation.y;
   armadillo.z=obj[2].tr.translation.z;
   armadillo.rayon=0.5f;
+
+
+  Sphere steg;
+  steg.x=obj[0].tr.translation.x;
+  steg.y=obj[0].tr.translation.y;
+  steg.z=obj[0].tr.translation.z;
+  steg.rayon=0.5f;
+
+
+  char struc[][22]={"steg3","steg4","steg5","steg6","steg7","steg8","steg9","steg10","steg11","steg12","steg13","steg14","steg15","steg16","steg17","steg18","steg19","steg20","steg21","steg22","steg23","steg24"};
+    for (int i=3;i<25;i++) {
+      Sphere struc[i-3];
+      struc[i-3].x=obj[i].tr.translation.x;
+      struc[i-3].y=obj[i].tr.translation.y;
+      struc[i-3].z=obj[i].tr.translation.z;
+      struc[i-3].rayon=0.5f;
+      Collision(camera,struc[i-3]);
+      if (Collision(camera,struc[i-3]))      std::cout << "j'ai touche" << std::endl;
+    }
+
+  
   glutTimerFunc(10, timer_callback, 0);
   deplacement();
   sauter();
   Collision(camera,armadillo);
+  if (Collision(camera,armadillo))      std::cout << "j'ai touche armadillo" << std::endl;
+  Collision(camera,steg);
+  if (Collision(camera,steg))      std::cout << "j'ai touche steg" << std::endl;
+  
   glutPostRedisplay();
   size_actualisation();
   change_capture();
