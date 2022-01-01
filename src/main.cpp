@@ -761,7 +761,7 @@ void init_model_5()
 {
   // Chargement d'un maillage a partir d'un fichier
   mesh m = load_obj_file("data/maze_compressed.obj");
-  
+
   // Affecte une transformation sur les sommets du maillage
   float s = 2.2f;
   mat4 transform = mat4(   s, 0.0f, 0.0f, 0.0f,
@@ -779,7 +779,7 @@ void init_model_5()
   obj[25].vao = upload_mesh_to_gpu(m);
 
   obj[25].nb_triangle = m.connectivity.size();
-  obj[25].texture_id = glhelper::load_texture("data/bois.tga");
+  obj[25].texture_id = glhelper::load_texture("data/wall.tga");
   obj[25].visible = true;
   obj[25].prog = shader_program_id;
 
