@@ -20,7 +20,7 @@ GLuint gui_program_id;
 camera cam;
 
 // Pour donner le nombre d'objets présents au total
-const int nb_obj = 25;
+const int nb_obj = 26;
 objet3d obj[nb_obj];
 
 const int nb_text = 2;
@@ -80,6 +80,7 @@ static void init()
   init_model_2();
   init_model_3();
   init_model_4();
+  init_model_5();
 
   // Pour supprimer le curseur à l'écran
   glutSetCursor(GLUT_CURSOR_NONE);
@@ -354,7 +355,7 @@ static void mouse_cursor(int x, int y) {
     glutWarpPointer(WIDTH / 2, HEIGHT / 2); //  Pour ramener le pointeur au centre de la fenêtre
     
     // Mise à jour du centre de rotation de la caméra
-    cam.tr.rotation_center = vec3(cam_posX, 2.0f, cam_posZ);
+    //cam.tr.rotation_center = vec3(cam_posX, 2.0f, cam_posZ);
     
     //printf("x = %d\ty = %d\n",x,y);
     //printf("WIDTH = %d  HEIGTH = %d\n",WIDTH,HEIGHT);
@@ -753,4 +754,33 @@ void init_model_4() {
     obj[i].tr.rotation_euler.y = rand()/(float)RAND_MAX*2*M_PI;
   }
 
+}
+
+void init_model_5()
+{
+  // Chargement d'un maillage a partir d'un fichier
+  mesh m = load_obj_file("data/maze.obj");
+
+  // Affecte une transformation sur les sommets du maillage
+  float s = 2.2f;
+  mat4 transform = mat4(   s, 0.0f, 0.0f, 0.0f,
+      0.0f,    s, 0.0f, 0.0f,
+      0.0f, 0.0f,   s , 0.0f,
+      0.0f, 0.0f, 0.0f, 1.0f);
+  apply_deformation(&m,transform);
+
+  // Centre la rotation du modele 1 autour de son centre de gravite approximatif
+  obj[25].tr.rotation_center = vec3(0.0f,0.0f,0.0f);
+
+  update_normals(&m);
+  fill_color(&m,vec3(1.0f,1.0f,1.0f));
+
+  obj[25].vao = upload_mesh_to_gpu(m);
+
+  obj[25].nb_triangle = m.connectivity.size();
+  obj[25].texture_id = glhelper::load_texture("data/bois.tga");
+  obj[25].visible = true;
+  obj[25].prog = shader_program_id;
+
+  obj[25].tr.translation = vec3(5.0, -0.5, 0.0);
 }
