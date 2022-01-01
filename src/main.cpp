@@ -760,8 +760,8 @@ void init_model_4() {
 void init_model_5()
 {
   // Chargement d'un maillage a partir d'un fichier
-  mesh m = load_obj_file("data/maze.obj");  // Version détaillée
-  //mesh m = load_obj_file("data/maze_compressed.obj"); // Version compressée
+  mesh m = load_obj_file("data/maze_compressed.obj");
+  
   // Affecte une transformation sur les sommets du maillage
   float s = 2.2f;
   mat4 transform = mat4(   s, 0.0f, 0.0f, 0.0f,
