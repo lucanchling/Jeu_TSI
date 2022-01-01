@@ -756,11 +756,12 @@ void init_model_4() {
 
 }
 
+// Création du modèle du labyrhinte
 void init_model_5()
 {
   // Chargement d'un maillage a partir d'un fichier
-  mesh m = load_obj_file("data/maze.obj");
-
+  mesh m = load_obj_file("data/maze.obj");  // Version détaillée
+  //mesh m = load_obj_file("data/maze_compressed.obj"); // Version compressée
   // Affecte une transformation sur les sommets du maillage
   float s = 2.2f;
   mat4 transform = mat4(   s, 0.0f, 0.0f, 0.0f,
@@ -782,5 +783,5 @@ void init_model_5()
   obj[25].visible = true;
   obj[25].prog = shader_program_id;
 
-  obj[25].tr.translation = vec3(5.0, -0.5, 0.0);
+  obj[25].tr.translation = vec3(0.0, -0.5, 0.0);
 }
