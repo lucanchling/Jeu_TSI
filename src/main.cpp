@@ -174,10 +174,11 @@ static void keyboard_callback(unsigned char key, int x, int y )
 // Cette fonction permet aussi l'actualisation de la position de la caméra
 static void deplacement() 
 {
+  // Récupération de la matrice de rotation de la caméra
   mat4 rotation_x = matrice_rotation(cam.tr.rotation_euler.x, 1.0f, 0.0f, 0.0f);
   mat4 rotation_y = matrice_rotation(-cam.tr.rotation_euler.y, 0.0f, 1.0f, 0.0f);
   mat4 rotation_z = matrice_rotation(cam.tr.rotation_euler.z, 0.0f, 0.0f, 1.0f); 
-  mat4 rotation =  rotation_y;
+  mat4 rotation =  rotation_y;  // On récupère modifie seulement la composante en y utile pour le calcul des translation (récupération de l'orientation) 
 
   if (up) {
     cam.tr.translation += rotation * vec3(0, 0, -dL);
@@ -453,7 +454,7 @@ static void timer_callback(int)
   glutPostRedisplay();
   // size_actualisation();
   // change_capture();
-  printf("orienty = %f\t orientx = %f\n",cam.tr.rotation_euler.y,cam.tr.rotation_euler.x);
+  //printf("orienty = %f\t orientx = %f\n",cam.tr.rotation_euler.y,cam.tr.rotation_euler.x);
   
     
 }
