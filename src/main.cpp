@@ -80,7 +80,7 @@ static void init()
   init_model_2();
   init_model_3();
   init_model_4();
-  // init_model_5();
+  init_model_5();
 
   // Pour supprimer le curseur à l'écran
   glutSetCursor(GLUT_CURSOR_NONE);
@@ -235,6 +235,8 @@ static void deplacement()
   // // Déplacement sur l'axe des Y pour tester la scène avant implémentation des mouvements de souris 
   // if (fps_left==true) cam.tr.rotation_euler.y-=d_angle; 
   // if (fps_right==true) cam.tr.rotation_euler.y+=d_angle;
+  
+  // Pour réactualiser le centre de rotation
   cam.tr.rotation_center = cam.tr.translation;
 }
 
@@ -368,9 +370,18 @@ void mouse_cursor(int x, int y) {
   //   cam_orientation = fmod(cam_orientation,2*M_PI); // Modulo 2pi 
   //   if (cam_orientation < 0) cam_orientation = 2*M_PI - abs(cam_orientation); // Same value peut importe le sens d'orientation (gauche ou droite)
     
-    cam.tr.rotation_euler.x += 0.001f * d_angle * 2*M_PI*float(WIDTH / 2 - tempY);
-    
-    
+    // Condition pour éviter des déplacements incorrects (si la caméra fait un tour complet etc...)
+    if (abs(cam.tr.rotation_euler.x) <= M_PI/2) {
+      cam.tr.rotation_euler.x += 0.001f * d_angle * 2*M_PI*float(WIDTH / 2 - tempY);
+    }
+    // Lorsqu'elle pointe vers le haut
+    if (cam.tr.rotation_euler.x <= -M_PI/2) {
+      cam.tr.rotation_euler.x += 0.0001;  // On la redécale légèrement vers le bas pour qu'on puisse la redépacer (pour que la condition du dessus soit respectée)
+    }
+    // Lorsqu'elle pointe vers le bas
+    if (cam.tr.rotation_euler.x >= M_PI/2) {
+      cam.tr.rotation_euler.x -= 0.0001;
+    }
     //printf("x = %d\ty = %d\n",x,y);
     //printf("WIDTH = %d  HEIGTH = %d\n",WIDTH,HEIGHT);
     
@@ -442,7 +453,7 @@ static void timer_callback(int)
   glutPostRedisplay();
   // size_actualisation();
   // change_capture();
-  //printf("posx = %f\tposz = %f\t orient = %f\n",cam_posX,cam_posZ,cam_orientation);
+  printf("orienty = %f\t orientx = %f\n",cam.tr.rotation_euler.y,cam.tr.rotation_euler.x);
   
     
 }
