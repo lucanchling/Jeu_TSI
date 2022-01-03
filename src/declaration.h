@@ -75,3 +75,4 @@ void init_model_4();
 void init_model_5();
 
 void draw_obj3d(const objet3d* const obj, camera cam);
+void mouse_cursor(int x, int y);

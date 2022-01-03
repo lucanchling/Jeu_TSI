@@ -80,7 +80,7 @@ static void init()
   init_model_2();
   init_model_3();
   init_model_4();
-  init_model_5();
+  // init_model_5();
 
   // Pour supprimer le curseur à l'écran
   glutSetCursor(GLUT_CURSOR_NONE);
@@ -121,8 +121,9 @@ static void init()
 /*****************************************************************************\
 * keyboard_callback                                                           *
 \*****************************************************************************/
-static void keyboard_callback(unsigned char key, int, int)
+static void keyboard_callback(unsigned char key, int x, int y )
 {
+  mouse_cursor(x,y);
   switch (key)
   {
     case 'p':
@@ -173,52 +174,68 @@ static void keyboard_callback(unsigned char key, int, int)
 // Cette fonction permet aussi l'actualisation de la position de la caméra
 static void deplacement() 
 {
+  mat4 rotation_x = matrice_rotation(cam.tr.rotation_euler.x, 1.0f, 0.0f, 0.0f);
+  mat4 rotation_y = matrice_rotation(-cam.tr.rotation_euler.y, 0.0f, 1.0f, 0.0f);
+  mat4 rotation_z = matrice_rotation(cam.tr.rotation_euler.z, 0.0f, 0.0f, 1.0f); 
+  mat4 rotation =  rotation_y;
 
-  if (left) {
-    if(dodge)cam.tr.translation.x-=2*dL;        //test pour savoir si l'esquive est souhaitée ou non
-    else cam.tr.translation.x-=dL;
-    // Partie réactualisation de la position de la caméra
-    if (cam_orientation == 0) cam_posX -= dL;
-    else {
-      cam_posX -= dL*cos(cam_orientation);
-      cam_posZ += dL*sin(cam_orientation);
-    }
-  }
-  if (right) {
-    if(dodge)cam.tr.translation.x+=2*dL;        //test pour savoir si l'esquive est souhaitée ou non
-    else cam.tr.translation.x+=dL;
-    // Partie réactualisation de la position de la caméra
-    if (cam_orientation == 0) cam_posX += dL;
-    else {
-      cam_posX += dL*cos(cam_orientation);
-      cam_posZ -= dL*sin(cam_orientation);
-    }
-  }
   if (up) {
-    if (dodge)cam.tr.translation.z-=2*dL;       //test pour savoir si l'esquive est souhaitée ou non
-    else cam.tr.translation.z-=dL;
-    // Partie réactualisation de la position de la caméra
-    if (cam_orientation == 0) cam_posZ += dL;
-    else {
-      cam_posX += dL*cos(cam_orientation);
-      cam_posZ += dL*sin(cam_orientation);
-    }
+    cam.tr.translation += rotation * vec3(0, 0, -dL);
   }
   if (down) {
-    if (dodge)cam.tr.translation.z+=2*dL;       //test pour savoir si l'esquive est souhaitée ou non
-    else cam.tr.translation.z+=dL;
-    // Partie réactualisation de la position de la caméra
-    if (cam_orientation == 0) cam_posZ -= dL;
-    else {
-      cam_posX -= dL*cos(cam_orientation);
-      cam_posZ -= dL*sin(cam_orientation);
-    }
+    cam.tr.translation += rotation * vec3(0, 0, dL);
   }
+  if (left) {
+    cam.tr.translation += rotation * vec3(-dL, 0, 0);
+  }
+  if (right) {
+    cam.tr.translation += rotation * vec3(dL, 0, 0);
+  }
+  // if (left) {
+  //   if(dodge)cam.tr.translation.x-=2*dL;        //test pour savoir si l'esquive est souhaitée ou non
+  //   else cam.tr.translation.x-=dL;
+  //   // Partie réactualisation de la position de la caméra
+  //   if (cam_orientation == 0) cam_posX -= dL;
+  //   else {
+  //     cam_posX -= dL*cos(cam_orientation);
+  //     cam_posZ += dL*sin(cam_orientation);
+  //   }
+  // }
+  // if (right) {
+  //   if(dodge)cam.tr.translation.x+=2*dL;        //test pour savoir si l'esquive est souhaitée ou non
+  //   else cam.tr.translation.x+=dL;
+  //   // Partie réactualisation de la position de la caméra
+  //   if (cam_orientation == 0) cam_posX += dL;
+  //   else {
+  //     cam_posX += dL*cos(cam_orientation);
+  //     cam_posZ -= dL*sin(cam_orientation);
+  //   }
+  // }
+  // if (up) {
+  //   if (dodge)cam.tr.translation.z-=2*dL;       //test pour savoir si l'esquive est souhaitée ou non
+  //   else cam.tr.translation.z-=dL;
+  //   // Partie réactualisation de la position de la caméra
+  //   if (cam_orientation == 0) cam_posZ += dL;
+  //   else {
+  //     cam_posX += dL*cos(cam_orientation);
+  //     cam_posZ += dL*sin(cam_orientation);
+  //   }
+  // }
+  // if (down) {
+  //   if (dodge)cam.tr.translation.z+=2*dL;       //test pour savoir si l'esquive est souhaitée ou non
+  //   else cam.tr.translation.z+=dL;
+  //   // Partie réactualisation de la position de la caméra
+  //   if (cam_orientation == 0) cam_posZ -= dL;
+  //   else {
+  //     cam_posX -= dL*cos(cam_orientation);
+  //     cam_posZ -= dL*sin(cam_orientation);
+  //   }
+  // }
 
-  // Déplacement sur l'axe des Y pour tester la scène avant implémentation des mouvements de souris 
-  if (fps_left==true) cam.tr.rotation_euler.y-=d_angle; 
-  if (fps_right==true) cam.tr.rotation_euler.y+=d_angle;
-
+  // // Déplacement sur l'axe des Y pour tester la scène avant implémentation des mouvements de souris 
+  // if (fps_left==true) cam.tr.rotation_euler.y-=d_angle; 
+  // if (fps_right==true) cam.tr.rotation_euler.y+=d_angle;
+  cam.tr.rotation_center = cam.tr.translation;
 }
 
 
@@ -228,6 +245,7 @@ static void sauter()
   if (jump==false) {
     if (cam.tr.translation.y>d_jump) cam.tr.translation.y-=d_jump;
   }
+    cam.tr.rotation_center = cam.tr.translation;
 }
 
 
@@ -336,39 +354,31 @@ static void size_actualisation() {
 /*****************************************************************************\
 * Rotation via l'utilisation de la souris                                     *
 \*****************************************************************************/
-bool capture = false; // flag pour remettre à zero ou non les coord
-static void mouse_cursor(int x, int y) { 
-  if (capture) {
+// bool capture = false; // flag pour remettre à zero ou non les coord
+void mouse_cursor(int x, int y) { 
+  // if (capture) {
     int tempX = x;
     int tempY = HEIGHT - y;
     
     
     cam.tr.rotation_euler.y -= 0.001f * d_angle * 2*M_PI*float(HEIGHT / 2 - tempX);
     
-    // Pour actualiser l'orientation de la caméra
-    cam_orientation -= (0.001f * d_angle * 2*M_PI*float(HEIGHT / 2 - tempX)); 
-    cam_orientation = fmod(cam_orientation,2*M_PI); // Modulo 2pi 
-    if (cam_orientation < 0) cam_orientation = 2*M_PI - abs(cam_orientation); // Same value peut importe le sens d'orientation (gauche ou droite)
+  //   // Pour actualiser l'orientation de la caméra
+  //   cam_orientation -= (0.001f * d_angle * 2*M_PI*float(HEIGHT / 2 - tempX)); 
+  //   cam_orientation = fmod(cam_orientation,2*M_PI); // Modulo 2pi 
+  //   if (cam_orientation < 0) cam_orientation = 2*M_PI - abs(cam_orientation); // Same value peut importe le sens d'orientation (gauche ou droite)
     
     cam.tr.rotation_euler.x += 0.001f * d_angle * 2*M_PI*float(WIDTH / 2 - tempY);
     
-    glutWarpPointer(WIDTH / 2, HEIGHT / 2); //  Pour ramener le pointeur au centre de la fenêtre
-    
-    // Mise à jour du centre de rotation de la caméra
-    //cam.tr.rotation_center = vec3(cam_posX, 2.0f, cam_posZ);
     
     //printf("x = %d\ty = %d\n",x,y);
     //printf("WIDTH = %d  HEIGTH = %d\n",WIDTH,HEIGHT);
     
     
     
-  }
-};
-
-// gestion du flag pour ne pas faire le refresh h24
-static void change_capture() {
-  capture = !capture;
+  // }
 }
+
 /*****************************************************************************\
 * timer_callback                                                              *
 \*****************************************************************************/
@@ -417,23 +427,23 @@ static void timer_callback(int)
     }
 
   
-  glutTimerFunc(10, timer_callback, 0);
   deplacement();
   sauter();
-  Collision(camera,armadillo);
+  // Collision(camera,armadillo);
   if (Collision(camera,armadillo))      std::cout << "j'ai touche armadillo" << std::endl;  //test d'une collision
-  Collision(camera,steg);
+  // Collision(camera,steg);
   if (Collision(camera,steg))      std::cout << "j'ai touche steg" << std::endl;  //test d'une collision
   
+  //  Pour ramener le pointeur au centre de la fenêtre
+  glutWarpPointer(WIDTH / 2, HEIGHT / 2);
+
+  glutTimerFunc(10, timer_callback, 0);
+
   glutPostRedisplay();
-  size_actualisation();
-  change_capture();
+  // size_actualisation();
+  // change_capture();
   //printf("posx = %f\tposz = %f\t orient = %f\n",cam_posX,cam_posZ,cam_orientation);
   
-
-  
-  // // Réactualisation du centre de rotation de la caméra
-  // cam.tr.rotation_center = vec3(cam_posX, 2.0f, cam_posZ);
     
 }
 
