@@ -253,7 +253,7 @@ static void deplacement()
 
 static void sauter()
 { float hauteur_cam=cam.tr.translation.y;
-  if (jump==true && cam.tr.translation.y<50.0f) cam.tr.translation.y+=d_jump;
+  if (jump==true && cam.tr.translation.y<8.0f) cam.tr.translation.y+=d_jump;
   if (jump==false) {
     if (cam.tr.translation.y>d_jump) cam.tr.translation.y-=d_jump;
   }
@@ -906,6 +906,10 @@ void init_model_6()
 
   obj[25].tr.translation = vec3(Longueur, -0.5, 0.0);
   
+
+  // Génération aléatoire d'un maze
+
+  // Liste pour générer un signe aléatoire à l'aide de disi(gen)
   float liste_signe[8];
   liste_signe[0] = -1.0;
   liste_signe[1] = 1.0;
@@ -919,24 +923,26 @@ void init_model_6()
   
   std::random_device rd;  // Will be used to obtain a seed for the random number engine
   std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
-  std::uniform_real_distribution<> dis(1.0, 16.0);
+  std::uniform_real_distribution<> dis(1.0, 16.0);  // nombre aleat pour la position
   std::uniform_real_distribution<> disi(0.0, 7.0);
+  // Partie proche --> pour éviter de pop dans un mur
   for (int i=26;i<50;i++) {
 
     obj[i] = obj[25];
     
-    obj[i].tr.translation = vec3((liste_signe[int(disi(gen))]*dis(gen)*Longueur)/8, -0.5, (liste_signe[int(disi(gen))]*dis(gen)*Longueur)/8);
+    obj[i].tr.translation = vec3((liste_signe[int(disi(gen))]*dis(gen)*Longueur)/7, -0.5, (liste_signe[int(disi(gen))]*dis(gen)*Longueur)/7); // Facteur 7 pour la proximité avec l'endroit ou pop la cam
     
     if (i%2==0){
       obj[i].tr.rotation_euler.y = M_PI/2;
     }
   }
 
-   for (int i=50;i<150;i++) {
+  // Partie Loin
+  for (int i=50;i<150;i++) {
 
     obj[i] = obj[25];
     
-    obj[i].tr.translation = vec3((liste_signe[int(disi(gen))]*dis(gen)*Longueur)/4, -0.5, (liste_signe[int(disi(gen))]*dis(gen)*Longueur)/4);
+    obj[i].tr.translation = vec3((liste_signe[int(disi(gen))]*dis(gen)*Longueur)/4, -0.5, (liste_signe[int(disi(gen))]*dis(gen)*Longueur)/4); // Facteur 4 pour être un peu loin
     
     // if (i%2==0){
     //   obj[i].tr.rotation_euler.y = M_PI/2;
