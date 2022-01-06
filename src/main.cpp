@@ -80,7 +80,7 @@ static void init()
   init_model_2();
   init_model_3();
   init_model_4();
-  //init_model_5();
+  init_model_5();
 
   // Pour supprimer le curseur à l'écran
   glutSetCursor(GLUT_CURSOR_NONE);
@@ -334,6 +334,12 @@ struct Sphere
   float rayon;
 };
 
+struct Cube
+{
+  float x,y,z;
+  float w,h,d;
+};
+
 static bool Collision(Sphere S1,Sphere S2)
 {
    int d2 = (S1.x-S2.x)*(S1.x-S2.x) + (S1.y-S2.y)*(S1.y-S2.y) + (S1.z-S2.z)*(S1.z-S2.z);
@@ -350,6 +356,19 @@ static bool Collision(Sphere S1,Sphere S2)
    }
 }
 
+
+bool CollisionCube(Cube box1,Cube box2)
+{
+   if((box2.x >= box1.x + box1.w)      // trop à droite
+	|| (box2.x + box2.w <= box1.x) // trop à gauche
+	|| (box2.y >= box1.y + box1.h) // trop en bas
+	|| (box2.y + box2.h <= box1.y)  // trop en haut	
+        || (box2.z >= box1.z + box1.d)   // trop derrière
+	|| (box2.z + box2.d <= box1.z))  // trop devant
+          return false; 
+   else
+          return true; 
+}
 
 
 
@@ -449,8 +468,22 @@ static void timer_callback(int)
 
       }
     }
+  Cube cameraAABB;
+  cameraAABB.x=cam.tr.translation.x;
+  cameraAABB.y=cam.tr.translation.y;
+  cameraAABB.z=cam.tr.translation.z;
+  cameraAABB.w=10*dL;
+  cameraAABB.h=10*dL;
+  cameraAABB.d=10*dL;
 
-  
+  Cube labAABB;
+  labAABB.x=obj[25].tr.translation.x;
+  labAABB.y=obj[25].tr.translation.y;
+  labAABB.z=obj[25].tr.translation.z;
+  labAABB.w=30*dL;
+  labAABB.h=30*dL;
+  labAABB.d=30*dL;
+
   deplacement();
   sauter();
   
@@ -470,6 +503,10 @@ static void timer_callback(int)
     obj[0].tr.translation.z;
   }    
   
+  if (CollisionCube(cameraAABB,labAABB)){
+    std::cout << "j'ai touche le lab" << std::endl; 
+  }
+
   //  Pour ramener le pointeur au centre de la fenêtre
   glutWarpPointer(WIDTH / 2, HEIGHT / 2);
 
@@ -804,7 +841,7 @@ void init_model_4() {
 }
 
 // Création du modèle du labyrhinte
-/*void init_model_5()
+void init_model_5()
 {
   // Chargement d'un maillage a partir d'un fichier
   mesh m = load_obj_file("data/maze_compressed.obj");
@@ -831,4 +868,5 @@ void init_model_4() {
   obj[25].prog = shader_program_id;
 
   obj[25].tr.translation = vec3(0.0, -0.5, 0.0);
-}*/
+  
+}
