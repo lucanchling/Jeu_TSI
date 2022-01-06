@@ -80,7 +80,7 @@ static void init()
   init_model_2();
   init_model_3();
   init_model_4();
-  init_model_5();
+  //init_model_5();
 
   // Pour supprimer le curseur à l'écran
   glutSetCursor(GLUT_CURSOR_NONE);
@@ -472,9 +472,9 @@ static void timer_callback(int)
   cameraAABB.x=cam.tr.translation.x;
   cameraAABB.y=cam.tr.translation.y;
   cameraAABB.z=cam.tr.translation.z;
-  cameraAABB.w=10*dL;
-  cameraAABB.h=10*dL;
-  cameraAABB.d=10*dL;
+  cameraAABB.w=30*dL;
+  cameraAABB.h=30*dL;
+  cameraAABB.d=30*dL;
 
   Cube labAABB;
   labAABB.x=obj[25].tr.translation.x;
@@ -841,7 +841,7 @@ void init_model_4() {
 }
 
 // Création du modèle du labyrhinte
-void init_model_5()
+/*void init_model_5()
 {
   // Chargement d'un maillage a partir d'un fichier
   mesh m = load_obj_file("data/maze_compressed.obj");
@@ -869,4 +869,4 @@ void init_model_5()
 
   obj[25].tr.translation = vec3(0.0, -0.5, 0.0);
   
-}
+}*/
