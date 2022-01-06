@@ -253,7 +253,7 @@ static void deplacement()
 
 static void sauter()
 { float hauteur_cam=cam.tr.translation.y;
-  if (jump==true && cam.tr.translation.y<8.0f) cam.tr.translation.y+=d_jump;
+  if (jump==true && cam.tr.translation.y<50.0f) cam.tr.translation.y+=d_jump;
   if (jump==false) {
     if (cam.tr.translation.y>d_jump) cam.tr.translation.y-=d_jump;
   }
@@ -906,18 +906,43 @@ void init_model_6()
 
   obj[25].tr.translation = vec3(Longueur, -0.5, 0.0);
   
+  float liste_signe[8];
+  liste_signe[0] = -1.0;
+  liste_signe[1] = 1.0;
+  liste_signe[2] = 1.0;
+  liste_signe[3] = -1.0;
+  liste_signe[4] = -1.0;
+  liste_signe[5] = 1.0;
+  liste_signe[6] = -1.0;
+  liste_signe[7] = 1.0;
+  
+  
   std::random_device rd;  // Will be used to obtain a seed for the random number engine
   std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
-  std::uniform_real_distribution<> dis(-5.0, 5.0);
-  for (int i=26;i<150;i++) {
-    obj[i] = obj[0];
+  std::uniform_real_distribution<> dis(1.0, 16.0);
+  std::uniform_real_distribution<> disi(0.0, 7.0);
+  for (int i=26;i<50;i++) {
 
     obj[i] = obj[25];
-    obj[i].tr.translation = vec3(dis(gen)*Longueur, -0.5, dis(gen)*Longueur);
+    
+    obj[i].tr.translation = vec3((liste_signe[int(disi(gen))]*dis(gen)*Longueur)/8, -0.5, (liste_signe[int(disi(gen))]*dis(gen)*Longueur)/8);
     
     if (i%2==0){
       obj[i].tr.rotation_euler.y = M_PI/2;
     }
+  }
+
+   for (int i=50;i<150;i++) {
+
+    obj[i] = obj[25];
+    
+    obj[i].tr.translation = vec3((liste_signe[int(disi(gen))]*dis(gen)*Longueur)/4, -0.5, (liste_signe[int(disi(gen))]*dis(gen)*Longueur)/4);
+    
+    // if (i%2==0){
+    //   obj[i].tr.rotation_euler.y = M_PI/2;
+    // }
+
+    obj[i].tr.rotation_euler.y = rand()/(float)RAND_MAX*2*M_PI;
 
   }
   
