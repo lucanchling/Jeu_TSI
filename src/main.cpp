@@ -20,7 +20,7 @@ GLuint gui_program_id;
 camera cam;
 
 // Pour donner le nombre d'objets présents au total
-const int nb_obj = 26;
+const int nb_obj = 150;
 objet3d obj[nb_obj];
 
 const int nb_text = 2;
@@ -80,7 +80,8 @@ static void init()
   init_model_2();
   init_model_3();
   init_model_4();
-  //init_model_5();
+  //init_model_5(); // Laby add on blender
+  init_model_6(); // Laby à la mano
 
   // Pour supprimer le curseur à l'écran
   glutSetCursor(GLUT_CURSOR_NONE);
@@ -252,7 +253,7 @@ static void deplacement()
 
 static void sauter()
 { float hauteur_cam=cam.tr.translation.y;
-  if (jump==true && cam.tr.translation.y<15.0f) cam.tr.translation.y+=d_jump;
+  if (jump==true && cam.tr.translation.y<8.0f) cam.tr.translation.y+=d_jump;
   if (jump==false) {
     if (cam.tr.translation.y>d_jump) cam.tr.translation.y-=d_jump;
   }
@@ -841,18 +842,54 @@ void init_model_4() {
 }
 
 // Création du modèle du labyrhinte
-/*void init_model_5()
+
+// Modèle à partir de blender --> ne pas utiliser car les collisions will not fontionner (convexe too complexe pour OpenGL)
+// void init_model_5()
+// {
+//   // Chargement d'un maillage a partir d'un fichier
+//   mesh m = load_obj_file("data/maze.obj");
+
+//   // Affecte une transformation sur les sommets du maillage
+//   float s = 2.2f;
+//   mat4 transform = mat4(   s, 0.0f, 0.0f, 0.0f,
+//       0.0f,    s, 0.0f, 0.0f,
+//       0.0f, 0.0f,   s , 0.0f,
+//       0.0f, 0.0f, 0.0f, 1.0f);
+//   apply_deformation(&m,transform);
+
+//   // Centre la rotation du modele 1 autour de son centre de gravite approximatif
+//   obj[25].tr.rotation_center = vec3(0.0f,0.0f,0.0f);
+
+//   update_normals(&m);
+//   fill_color(&m,vec3(1.0f,1.0f,1.0f));
+
+//   obj[25].vao = upload_mesh_to_gpu(m);
+
+//   obj[25].nb_triangle = m.connectivity.size();
+//   obj[25].texture_id = glhelper::load_texture("data/wall.tga");
+//   obj[25].visible = true;
+//   obj[25].prog = shader_program_id;
+
+//   obj[25].tr.translation = vec3(0.0, -0.5, 0.0);
+  
+// }
+
+void init_model_6()
 {
   // Chargement d'un maillage a partir d'un fichier
-  mesh m = load_obj_file("data/maze_compressed.obj");
+  mesh m = load_obj_file("data/wall.obj");
 
   // Affecte une transformation sur les sommets du maillage
-  float s = 2.2f;
+  float s = 2.5f;
   mat4 transform = mat4(   s, 0.0f, 0.0f, 0.0f,
       0.0f,    s, 0.0f, 0.0f,
       0.0f, 0.0f,   s , 0.0f,
       0.0f, 0.0f, 0.0f, 1.0f);
   apply_deformation(&m,transform);
+
+  // Calcul des dimmensions des murs pour positionnement
+  float Largeur = s/2;
+  float Longueur = s*2;
 
   // Centre la rotation du modele 1 autour de son centre de gravite approximatif
   obj[25].tr.rotation_center = vec3(0.0f,0.0f,0.0f);
@@ -867,6 +904,24 @@ void init_model_4() {
   obj[25].visible = true;
   obj[25].prog = shader_program_id;
 
-  obj[25].tr.translation = vec3(0.0, -0.5, 0.0);
+  obj[25].tr.translation = vec3(Longueur, -0.5, 0.0);
   
-}*/
+  std::random_device rd;  // Will be used to obtain a seed for the random number engine
+  std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
+  std::uniform_real_distribution<> dis(-5.0, 5.0);
+  for (int i=26;i<150;i++) {
+    obj[i] = obj[0];
+
+    obj[i] = obj[25];
+    obj[i].tr.translation = vec3(dis(gen)*Longueur, -0.5, dis(gen)*Longueur);
+    
+    if (i%2==0){
+      obj[i].tr.rotation_euler.y = M_PI/2;
+    }
+
+  }
+  
+
+
+
+}
