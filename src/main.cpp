@@ -80,7 +80,7 @@ static void init()
   init_model_2();
   init_model_3();
   init_model_4();
-  init_model_5();
+  //init_model_5();
 
   // Pour supprimer le curseur à l'écran
   glutSetCursor(GLUT_CURSOR_NONE);
@@ -181,15 +181,23 @@ static void deplacement()
   mat4 rotation =  rotation_y;  // On récupère modifie seulement la composante en y utile pour le calcul des translation (récupération de l'orientation) 
 
   if (up) {
-    cam.tr.translation += rotation * vec3(0, 0, -dL);
+    if(dodge){cam.tr.translation += rotation * vec3(0, 0, -(3*dL));
+            //std::cout << cam.tr.translation.z << std::endl;     //juste pour montrer la différence de déplacement avec et sans esquive
+            }             
+    else {cam.tr.translation += rotation * vec3(0, 0, -dL);
+            //std::cout << cam.tr.translation.z << std::endl;
+            }
   }
   if (down) {
-    cam.tr.translation += rotation * vec3(0, 0, dL);
+    if(dodge)cam.tr.translation += rotation * vec3(0, 0, 3*dL);
+    else cam.tr.translation += rotation * vec3(0, 0, dL);
   }
   if (left) {
-    cam.tr.translation += rotation * vec3(-dL, 0, 0);
+    if(dodge)cam.tr.translation += rotation * vec3(-(3*dL), 0, 0);
+    else cam.tr.translation += rotation * vec3(-dL, 0, 0);
   }
   if (right) {
+    if(dodge)cam.tr.translation += rotation * vec3(3*dL, 0, 0);
     cam.tr.translation += rotation * vec3(dL, 0, 0);
   }
   // if (left) {
@@ -424,7 +432,11 @@ static void timer_callback(int)
       struc[i-3].z=obj[i].tr.translation.z;
       struc[i-3].rayon=0.5f;
       Collision(camera,struc[i-3]);
-      if (Collision(camera,struc[i-3]))      std::cout << "j'ai touche" << std::endl; //test d'une collision
+      if (Collision(camera,struc[i-3])){
+        obj[i].visible=false;
+        //std::cout << "j'ai touche" << std::endl; //test d'une collision
+        obj[i].tr.translation.z+=20;    //on déplace l'objet en dehors du jeu pour ne plus avoir de collisions
+      }     
       while ((Collision(struc[i-3], steg))||(Collision(struc[i-3],armadillo))){
             std::random_device rd;  // Will be used to obtain a seed for the random number engine
             std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
@@ -441,10 +453,22 @@ static void timer_callback(int)
   
   deplacement();
   sauter();
+  
   // Collision(camera,armadillo);
-  if (Collision(camera,armadillo))      std::cout << "j'ai touche armadillo" << std::endl;  //test d'une collision
+  if (Collision(camera,armadillo)){
+    obj[2].visible=false;             //si on a collision on passe ka visibilité de l'objet à false
+    //std::cout << "j'ai touche armadillo" << std::endl;      //test d'une collision
+    obj[2].tr.translation.z+=20;    //on déplace l'objet en dehors du jeu pour ne plus avoir de collisions
+  }
+  
+  
+  
   // Collision(camera,steg);
-  if (Collision(camera,steg))      std::cout << "j'ai touche steg" << std::endl;  //test d'une collision
+  if (Collision(camera,steg)){
+    obj[0].visible=false;
+    //std::cout << "j'ai touche steg" << std::endl;  //test d'une collision
+    obj[0].tr.translation.z;
+  }    
   
   //  Pour ramener le pointeur au centre de la fenêtre
   glutWarpPointer(WIDTH / 2, HEIGHT / 2);
@@ -455,6 +479,7 @@ static void timer_callback(int)
   // size_actualisation();
   // change_capture();
   //printf("orienty = %f\t orientx = %f\n",cam.tr.rotation_euler.y,cam.tr.rotation_euler.x);
+  
   
     
 }
@@ -491,7 +516,7 @@ int main(int argc, char** argv)
 
 
   glutTimerFunc(25, timer_callback, 0);
-
+  printf("%f",cam.tr.translation.y);
 
   glewExperimental = true;
   glewInit();
@@ -779,7 +804,7 @@ void init_model_4() {
 }
 
 // Création du modèle du labyrhinte
-void init_model_5()
+/*void init_model_5()
 {
   // Chargement d'un maillage a partir d'un fichier
   mesh m = load_obj_file("data/maze_compressed.obj");
@@ -806,4 +831,4 @@ void init_model_5()
   obj[25].prog = shader_program_id;
 
   obj[25].tr.translation = vec3(0.0, -0.5, 0.0);
-}
+}*/
