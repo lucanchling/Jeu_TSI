@@ -469,13 +469,16 @@ static void timer_callback(int)
 
       }
     }
+  float s = 2.5f;
+  float Largeur = s/2;
+  float Longueur = s*2;
   Cube cameraAABB;
   cameraAABB.x=cam.tr.translation.x;
   cameraAABB.y=cam.tr.translation.y;
   cameraAABB.z=cam.tr.translation.z;
-  cameraAABB.w=30*dL;
+  cameraAABB.w=20*dL;
   cameraAABB.h=50*dL;
-  cameraAABB.d=30*dL;
+  cameraAABB.d=10*dL;
 
   /*Cube labAABB;
   labAABB.x=obj[25].tr.translation.x;
@@ -485,16 +488,16 @@ static void timer_callback(int)
   labAABB.h=50*dL;
   labAABB.d=50*dL;
   */
-
+  //on crée un tableau comportant le nom de chaque bloc du labyrinthe
   char AABB[][75]={"a","b","c","d","e","f","g","h","i","j","k","l","m","o","p","q","r","s","t","u","v","w","x","y","z","a2","b2","c2","d2","e2","f2","g2","h2","i2","j2","k2","l2","m2","o2","p2","q2","r2","s2","t2","u2","v2","w2","x2","y2","z2","a3","b3","c3","d3","e3","f3","g3","h3","i3","j3","k3","l3","m3","o3","p3","q3","r3","s3","t3","u3","v3","w3"};
   for(int i=25;i<100;i++){
-    Cube AABB[i-25];
+    Cube AABB[i-25];                              //on crée la structure cubique de chaque bloc pour pouvoir gérer les collisions
     AABB[i-25].x=obj[i].tr.translation.x;
     AABB[i-25].y=obj[i].tr.translation.y;
     AABB[i-25].z=obj[i].tr.translation.z;
-    AABB[i-25].w=20*dL;
+    AABB[i-25].w=Largeur;
     AABB[i-25].h=100*dL;
-    AABB[i-25].d=70*dL;
+    AABB[i-25].d=Longueur;
     CollisionCube(AABB[i-25],cameraAABB);
     if (CollisionCube(AABB[i-25],cameraAABB)){
       //std::cout << "j'ai touche" << std::endl;
