@@ -51,6 +51,9 @@ bool fps_left=false;
 bool jump=false;
 bool dodge=false;
 
+// boolean pour gérer l'affichage des coordonnées
+bool coord = false;
+
 // Position de la caméra - pour actualiser la position de son centre de rotation
 float cam_posX = 0.0f;
 float cam_posZ = 0.0f;
@@ -309,19 +312,10 @@ static void special_callback(int key, int, int)
 {
   switch (key)
   {
-
-    case GLUT_KEY_UP:
-
-        break;
-      case GLUT_KEY_DOWN:
-
-       break;
-     case GLUT_KEY_LEFT:
-
-       break;
-     case GLUT_KEY_RIGHT:
-
-       break;
+    // Affichage des coord si l'on appui sur F3
+    case GLUT_KEY_F3:
+      coord = !coord;
+      break;
   }
 }
 
@@ -420,6 +414,35 @@ void mouse_cursor(int x, int y) {
 }
 
 /*****************************************************************************\
+* Gestion de l'affichage des coordonnées à l'écran                            *
+\*****************************************************************************/
+
+static void affichage_coord(){
+  if (coord) {
+    text_to_draw[0].value = std::to_string(cam.tr.translation.x);
+    text_to_draw[0].bottomLeft = vec2(-0.2, 0.5);
+    text_to_draw[0].topRight = vec2(0.2, 1);
+    init_text(text_to_draw);
+
+    text_to_draw[1]=text_to_draw[0];
+    text_to_draw[1].value = std::to_string(cam.tr.translation.z);
+    text_to_draw[1].bottomLeft.y = 0.0f;
+    text_to_draw[1].topRight.y = 0.5f;
+  }
+  else {
+    text_to_draw[0].value = " ";
+    text_to_draw[0].bottomLeft = vec2(-0.2, 0.5);
+    text_to_draw[0].topRight = vec2(0.2, 1);
+    init_text(text_to_draw);
+
+    text_to_draw[1]=text_to_draw[0];
+    text_to_draw[1].value = " ";
+    text_to_draw[1].bottomLeft.y = 0.0f;
+    text_to_draw[1].topRight.y = 0.5f;
+  }
+}
+
+/*****************************************************************************\
 * timer_callback                                                              *
 \*****************************************************************************/
 static void timer_callback(int)
@@ -507,6 +530,10 @@ static void timer_callback(int)
   deplacement();
   sauter();
   
+  // Affichage des coords
+  printf(" %i\n",coord);
+  affichage_coord();
+
   // Collision(camera,armadillo);
   if (Collision(camera,armadillo)){
     obj[2].visible=false;             //si on a collision on passe ka visibilité de l'objet à false
