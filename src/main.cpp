@@ -429,7 +429,7 @@ static void affichage_coord(){
     text_to_draw[1].bottomLeft.y = 0.0f;
     text_to_draw[1].topRight.y = 0.5f;
   }
-  else {
+  else {  // Pour effacer
     text_to_draw[0].value = " ";
     text_to_draw[0].bottomLeft = vec2(-0.2, 0.5);
     text_to_draw[0].topRight = vec2(0.2, 1);
@@ -527,11 +527,13 @@ static void timer_callback(int)
       //obj[i].visible=false;
     }
   }
+
+  // pour gérer le déplacement de la caméra
   deplacement();
+  // Pour gérer le saut
   sauter();
   
   // Affichage des coords
-  printf(" %i\n",coord);
   affichage_coord();
 
   // Collision(camera,armadillo);
