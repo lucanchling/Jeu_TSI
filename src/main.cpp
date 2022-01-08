@@ -20,7 +20,7 @@ GLuint gui_program_id;
 camera cam;
 
 // Pour donner le nombre d'objets présents au total
-const int nb_obj = 150;
+const int nb_obj = 151;
 objet3d obj[nb_obj];
 
 const int nb_text = 2;
@@ -85,6 +85,8 @@ static void init()
   init_model_4();
   //init_model_5(); // Laby add on blender
   init_model_6(); // Laby à la mano
+  init_model_7(); // Modèle de l'arbre
+
 
   // Pour supprimer le curseur à l'écran
   glutSetCursor(GLUT_CURSOR_NONE);
@@ -256,7 +258,7 @@ static void deplacement()
 
 static void sauter()
 { float hauteur_cam=cam.tr.translation.y;
-  if (jump==true && cam.tr.translation.y<8.0f) cam.tr.translation.y+=d_jump;
+  if (jump==true && cam.tr.translation.y<55.0f) cam.tr.translation.y+=d_jump;
   if (jump==false) {
     if (cam.tr.translation.y>d_jump) cam.tr.translation.y-=d_jump;
   }
@@ -838,7 +840,7 @@ void init_model_2()
   obj[1].nb_triangle = 2;
   obj[1].vao = upload_mesh_to_gpu(m);
 
-  obj[1].texture_id = glhelper::load_texture("data/grass.tga");
+  obj[1].texture_id = glhelper::load_texture("data/white.tga");
 
   obj[1].visible = true;
   obj[1].prog = shader_program_id;
@@ -1005,4 +1007,61 @@ void init_model_6()
 
 
 
+}
+
+
+// Réalisation du modèle de l'arbre
+void init_model_7()
+{
+    // Chargement d'un maillage a partir d'un fichier
+  mesh m = load_obj_file("data/Tree2.obj");
+
+  // Affecte une transformation sur les sommets du maillage
+    float s = 0.4f;
+    mat4 transform = mat4(s, 0.0f, 0.0f, 0.0f,
+        0.0f, s, 0.0f, -0.9f,
+        0.0f, 0.0f, s, 0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f);
+    apply_deformation(&m, transform);
+    apply_deformation(&m, matrice_rotation(M_PI / 2.0f, 1.0f, 0.0f, 0.0f));
+    apply_deformation(&m, matrice_rotation(1.5 * M_PI / 2.0f, 0.0f, 1.0f, 0.0f));
+
+  // Calcul des dimmensions des murs pour positionnement
+  float Largeur = s/2;
+  float Longueur = s*2;
+
+  // Centre la rotation du modele 1 autour de son centre de gravite approximatif
+  obj[150].tr.rotation_center = vec3(0.0f,0.0f,0.0f);
+
+  update_normals(&m);
+  fill_color(&m,vec3(1.0f,1.0f,1.0f));
+
+  obj[150].vao = upload_mesh_to_gpu(m);
+
+  obj[150].nb_triangle = m.connectivity.size();
+  obj[150].texture_id = glhelper::load_texture("data/Tree.tga");
+  obj[150].visible = true;
+  obj[150].prog = shader_program_id;
+
+  // Gestion du positionnement aleatoire de l'arbre
+
+  // Liste pour générer un signe aléatoire à l'aide de disi(gen)
+  float liste_signe[8];
+  liste_signe[0] = -1.0;
+  liste_signe[1] = 1.0;
+  liste_signe[2] = 1.0;
+  liste_signe[3] = -1.0;
+  liste_signe[4] = -1.0;
+  liste_signe[5] = 1.0;
+  liste_signe[6] = -1.0;
+  liste_signe[7] = 1.0;
+  
+  
+  std::random_device rd;  // Will be used to obtain a seed for the random number engine
+  std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
+  std::uniform_real_distribution<> dis(19.0, 24.0);  // nombre aleat pour la position
+  std::uniform_real_distribution<> disi(0.0, 7.0);
+
+
+  obj[150].tr.translation = vec3(liste_signe[int(disi(gen))]*dis(gen), -0.5, liste_signe[int(disi(gen))]*dis(gen));
 }
