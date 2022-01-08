@@ -67,6 +67,11 @@ float translation_y=0.0f;
 float translation_z=-3.0f;
 float d_jump=1.0f;
 
+// Variables pour le jeu
+float score = 0;
+int nb_vies = 3;
+
+
 /*****************************************************************************\
 * initialisation                                                              *
 \*****************************************************************************/
@@ -445,6 +450,17 @@ static void affichage_coord(){
 }
 
 /*****************************************************************************\
+* Gestion du jeu                                                             *
+\*****************************************************************************/
+static void jeu(){
+  while ((nb_vies>0) || ())
+  printf("Nombre de vie : %d\n",nb_vies);
+
+  
+  
+}
+
+/*****************************************************************************\
 * timer_callback                                                              *
 \*****************************************************************************/
 static void timer_callback(int)
@@ -480,6 +496,9 @@ static void timer_callback(int)
       if (Collision(camera,struc[i-3])){
         obj[i].visible=false;
         //std::cout << "j'ai touche" << std::endl; //test d'une collision
+        
+        // Gestion du nombre de vie
+        nb_vies -= 1;
         obj[i].tr.translation.z+=20;    //on déplace l'objet en dehors du jeu pour ne plus avoir de collisions
       }     
       while ((Collision(struc[i-3], steg))||(Collision(struc[i-3],armadillo))){
@@ -537,6 +556,9 @@ static void timer_callback(int)
   
   // Affichage des coords
   affichage_coord();
+
+  // Gestion du jeu 
+  jeu();
 
   // Collision(camera,armadillo);
   if (Collision(camera,armadillo)){
