@@ -68,9 +68,8 @@ float translation_z=-3.0f;
 float d_jump=1.0f;
 
 // Variables pour le jeu
-float score = 0;
 int nb_vies = 3;
-
+bool end = false;
 
 /*****************************************************************************\
 * initialisation                                                              *
@@ -452,9 +451,17 @@ static void affichage_coord(){
 /*****************************************************************************\
 * Gestion du jeu                                                             *
 \*****************************************************************************/
+
 static void jeu(){
-  while ((nb_vies>0) || ())
-  printf("Nombre de vie : %d\n",nb_vies);
+  if ((nb_vies>0) || (end == false)) {
+    std::cout << "\x1B[2J\x1B[H"; // Pour clear
+    printf("Nombre de vie : %d\n",nb_vies);
+  }
+
+  // fin du jeu
+  else {
+    exit(0);
+  }
 
   
   
