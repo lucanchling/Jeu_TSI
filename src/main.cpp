@@ -258,7 +258,7 @@ static void deplacement()
 
 static void sauter()
 { float hauteur_cam=cam.tr.translation.y;
-  if (jump==true && cam.tr.translation.y<55.0f) cam.tr.translation.y+=d_jump;
+  if (jump==true && cam.tr.translation.y<8.0f) cam.tr.translation.y+=d_jump;
   if (jump==false) {
     if (cam.tr.translation.y>d_jump) cam.tr.translation.y-=d_jump;
   }
@@ -297,8 +297,8 @@ static void keyboard_relache(unsigned char key, int,int)
       break;
 
     case ' ':
-      std::cout << "j'ai saute" << std::endl;
-      std::cout << cam.tr.translation.y << std::endl;
+      //std::cout << "j'ai saute" << std::endl;
+      //std::cout << cam.tr.translation.y << std::endl;
       jump = false;
       break;
 
@@ -606,7 +606,7 @@ int main(int argc, char** argv)
 
 
   glutTimerFunc(25, timer_callback, 0);
-  printf("%f",cam.tr.translation.y);
+  //printf("%f",cam.tr.translation.y);
 
   glewExperimental = true;
   glewInit();
@@ -840,7 +840,7 @@ void init_model_2()
   obj[1].nb_triangle = 2;
   obj[1].vao = upload_mesh_to_gpu(m);
 
-  obj[1].texture_id = glhelper::load_texture("data/white.tga");
+  obj[1].texture_id = glhelper::load_texture("data/grass.tga");
 
   obj[1].visible = true;
   obj[1].prog = shader_program_id;
@@ -896,35 +896,36 @@ void init_model_4() {
 // Création du modèle du labyrhinte
 
 // Modèle à partir de blender --> ne pas utiliser car les collisions will not fontionner (convexe too complexe pour OpenGL)
-// void init_model_5()
-// {
-//   // Chargement d'un maillage a partir d'un fichier
-//   mesh m = load_obj_file("data/maze.obj");
+/*void init_model_5()
+{
+  // Chargement d'un maillage a partir d'un fichier
+  mesh m = load_obj_file("data/maze.obj");
 
-//   // Affecte une transformation sur les sommets du maillage
-//   float s = 2.2f;
-//   mat4 transform = mat4(   s, 0.0f, 0.0f, 0.0f,
-//       0.0f,    s, 0.0f, 0.0f,
-//       0.0f, 0.0f,   s , 0.0f,
-//       0.0f, 0.0f, 0.0f, 1.0f);
-//   apply_deformation(&m,transform);
+  // Affecte une transformation sur les sommets du maillage
+  float s = 2.2f;
+  mat4 transform = mat4(   s, 0.0f, 0.0f, 0.0f,
+      0.0f,    s, 0.0f, 0.0f,
+      0.0f, 0.0f,   s , 0.0f,
+      0.0f, 0.0f, 0.0f, 1.0f);
+  apply_deformation(&m,transform);
 
-//   // Centre la rotation du modele 1 autour de son centre de gravite approximatif
-//   obj[25].tr.rotation_center = vec3(0.0f,0.0f,0.0f);
+  // Centre la rotation du modele 1 autour de son centre de gravite approximatif
+  obj[25].tr.rotation_center = vec3(0.0f,0.0f,0.0f);
 
-//   update_normals(&m);
-//   fill_color(&m,vec3(1.0f,1.0f,1.0f));
+  update_normals(&m);
+  fill_color(&m,vec3(1.0f,1.0f,1.0f));
 
-//   obj[25].vao = upload_mesh_to_gpu(m);
+  obj[25].vao = upload_mesh_to_gpu(m);
 
-//   obj[25].nb_triangle = m.connectivity.size();
-//   obj[25].texture_id = glhelper::load_texture("data/wall.tga");
-//   obj[25].visible = true;
-//   obj[25].prog = shader_program_id;
+  obj[25].nb_triangle = m.connectivity.size();
+  obj[25].texture_id = glhelper::load_texture("data/wall.tga");
+  obj[25].visible = true;
+  obj[25].prog = shader_program_id;
 
-//   obj[25].tr.translation = vec3(0.0, -0.5, 0.0);
+  obj[25].tr.translation = vec3(0.0, -0.5, 0.0);
   
-// }
+}
+*/
 
 void init_model_6()
 {
