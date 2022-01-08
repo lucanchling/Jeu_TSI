@@ -262,7 +262,7 @@ static void deplacement()
 
 static void sauter()
 { float hauteur_cam=cam.tr.translation.y;
-  if (jump==true && cam.tr.translation.y<8.0f) cam.tr.translation.y+=d_jump;
+  if (jump==true && cam.tr.translation.y<55.0f) cam.tr.translation.y+=d_jump;
   if (jump==false) {
     if (cam.tr.translation.y>d_jump) cam.tr.translation.y-=d_jump;
   }
@@ -301,8 +301,8 @@ static void keyboard_relache(unsigned char key, int,int)
       break;
 
     case ' ':
-      //std::cout << "j'ai saute" << std::endl;
-      //std::cout << cam.tr.translation.y << std::endl;
+      // std::cout << "j'ai saute" << std::endl;
+      // std::cout << cam.tr.translation.y << std::endl;
       jump = false;
       break;
 
@@ -453,9 +453,9 @@ static void affichage_coord(){
 \*****************************************************************************/
 
 static void jeu(){
-  if ((nb_vies>0) || (end == false)) {
-    std::cout << "\x1B[2J\x1B[H"; // Pour clear
-    printf("Nombre de vie : %d\n",nb_vies);
+  if ((nb_vies>0) && (end == false)) {
+    //std::cout << "\x1B[2J\x1B[H"; // Pour clear
+    //printf("Nombre de vie : %d\n",nb_vies);
   }
 
   // fin du jeu
@@ -491,6 +491,17 @@ static void timer_callback(int)
   steg.z=obj[0].tr.translation.z;
   steg.rayon=0.5f;
 
+  Sphere arbre;                       // Sphere pour l'arbre 
+  arbre.x=obj[150].tr.translation.x;
+  arbre.y=0.0;
+  arbre.z=obj[150].tr.translation.z;
+  arbre.rayon=0.5f;
+  
+  // Lorsq que le joueur touche l'arbre de fin --> fin du jeu 
+  if (Collision(camera,arbre)) {
+    end = true;
+  }
+
   //ici je crée une boucle for pour crée des sphères pour chaque stegausors
   char struc[][22]={"steg3","steg4","steg5","steg6","steg7","steg8","steg9","steg10","steg11","steg12","steg13","steg14","steg15","steg16","steg17","steg18","steg19","steg20","steg21","steg22","steg23","steg24"};
     for (int i=3;i<25;i++) {
@@ -506,12 +517,13 @@ static void timer_callback(int)
         
         // Gestion du nombre de vie
         nb_vies -= 1;
+
         obj[i].tr.translation.z+=20;    //on déplace l'objet en dehors du jeu pour ne plus avoir de collisions
       }     
       while ((Collision(struc[i-3], steg))||(Collision(struc[i-3],armadillo))){
             std::random_device rd;  // Will be used to obtain a seed for the random number engine
             std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
-            std::uniform_real_distribution<> dis(-10.0, 10.0);
+            std::uniform_real_distribution<> dis(-15.0, 15.0);
             // Positionnement aléatoire des dinos 
             obj[i].tr.translation = vec3(dis(gen), 0.0, dis(gen));
 
@@ -587,7 +599,6 @@ static void timer_callback(int)
     obj[0].tr.translation.z;
   }    
   
-
 
   //  Pour ramener le pointeur au centre de la fenêtre
   glutWarpPointer(WIDTH / 2, HEIGHT / 2);
@@ -909,7 +920,7 @@ void init_model_3()
 void init_model_4() {
   std::random_device rd;  // Will be used to obtain a seed for the random number engine
   std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
-  std::uniform_real_distribution<> dis(-10.0, 10.0);
+  std::uniform_real_distribution<> dis(-15.0, 15.0);
   for (int i=3;i<25;i++) {
     obj[i] = obj[0];
 
