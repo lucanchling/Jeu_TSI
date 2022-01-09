@@ -70,6 +70,7 @@ float d_jump=1.0f;
 // Variables pour le jeu
 int nb_vies = 3;
 bool end = false;
+bool iscollision=false;     //booléen permettant de savoir si on est en collision avec un mur ou pas
 
 /*****************************************************************************\
 * initialisation                                                              *
@@ -191,7 +192,7 @@ static void deplacement()
   mat4 rotation =  rotation_y;  // On récupère modifie seulement la composante en y utile pour le calcul des translation (récupération de l'orientation) 
 
   // Application de la translation en fonction de la touche pressée
-  if (up) {
+  if ((up)&&(iscollision==false)) {       //on test si on est en collision et donc si on peut bouger
     if(dodge){cam.tr.translation += rotation * vec3(0, 0, -(3*dL));
             //std::cout << cam.tr.translation.z << std::endl;     //juste pour montrer la différence de déplacement avec et sans esquive
             }             
@@ -199,15 +200,15 @@ static void deplacement()
             //std::cout << cam.tr.translation.z << std::endl;
             }
   }
-  if (down) {
+  if ((down)&&(iscollision==false)) {
     if(dodge)cam.tr.translation += rotation * vec3(0, 0, 3*dL);
     else cam.tr.translation += rotation * vec3(0, 0, dL);
   }
-  if (left) {
+  if ((left)&&(iscollision==false)) {
     if(dodge)cam.tr.translation += rotation * vec3(-(3*dL), 0, 0);
     else cam.tr.translation += rotation * vec3(-dL, 0, 0);
   }
-  if (right) {
+  if ((right)&&(iscollision==false)) {
     if(dodge)cam.tr.translation += rotation * vec3(3*dL, 0, 0);
     cam.tr.translation += rotation * vec3(dL, 0, 0);
   }
@@ -222,7 +223,7 @@ static void deplacement()
 
 static void sauter()
 { float hauteur_cam=cam.tr.translation.y;
-  if (jump==true && cam.tr.translation.y<55.0f) cam.tr.translation.y+=d_jump;
+  if (jump==true && cam.tr.translation.y<8.0f) cam.tr.translation.y+=d_jump;    //ici le 8.0f est la limite pour la hauteur de saut on ne peut pas aller plus haut
   if (jump==false) {
     if (cam.tr.translation.y>d_jump) cam.tr.translation.y-=d_jump;
   }
@@ -305,9 +306,10 @@ struct Cube
 
 static bool Collision(Sphere S1,Sphere S2)
 {
+   
    int d2 = (S1.x-S2.x)*(S1.x-S2.x) + (S1.y-S2.y)*(S1.y-S2.y) + (S1.z-S2.z)*(S1.z-S2.z);
    if (d2 > (S1.rayon + S2.rayon)*(S1.rayon + S2.rayon)){
-     //std::cout << "j'ai pas touche" << std::endl; 
+     //std::cout << "j'ai pas touche" << std::endl;
      return false;
 
    } 
@@ -328,9 +330,10 @@ bool CollisionCube(Cube box1,Cube box2)
 	|| (box2.y + box2.h <= box1.y)  // trop en haut	
         || (box2.z >= box1.z + box1.d)   // trop derrière
 	|| (box2.z + box2.d <= box1.z))  // trop devant
+          
           return false; 
    else
-          return true; 
+          return iscollision=true;        //ici on renvoie iscollision à true pour empecher de bouger
 }
 
 
@@ -457,6 +460,7 @@ static void timer_callback(int)
   if (Collision(camera,arbre)) {
     end = true;
   }
+  iscollision=false;      //ici on remet iscollision a false pour pouvoir rebouger
 
   //ici je crée une boucle for pour crée des sphères pour chaque stegausors
   char struc[][22]={"steg3","steg4","steg5","steg6","steg7","steg8","steg9","steg10","steg11","steg12","steg13","steg14","steg15","steg16","steg17","steg18","steg19","steg20","steg21","steg22","steg23","steg24"};
@@ -495,7 +499,7 @@ static void timer_callback(int)
   cameraAABB.x=cam.tr.translation.x;
   cameraAABB.y=cam.tr.translation.y;
   cameraAABB.z=cam.tr.translation.z;
-  cameraAABB.w=20*dL;
+  cameraAABB.w=10*dL;
   cameraAABB.h=50*dL;
   cameraAABB.d=10*dL;
 
@@ -537,6 +541,7 @@ static void timer_callback(int)
 
   // Collision(camera,armadillo);
   if (Collision(camera,armadillo)){
+    nb_vies -= 1;
     obj[2].visible=false;             //si on a collision on passe ka visibilité de l'objet à false
     //std::cout << "j'ai touche armadillo" << std::endl;      //test d'une collision
     obj[2].tr.translation.z+=20;    //on déplace l'objet en dehors du jeu pour ne plus avoir de collisions
@@ -550,6 +555,7 @@ static void timer_callback(int)
   
   // Collision(camera,steg);
   if (Collision(camera,steg)){
+    nb_vies -= 1;
     obj[0].visible=false;
     //std::cout << "j'ai touche steg" << std::endl;  //test d'une collision
     obj[0].tr.translation.z;
