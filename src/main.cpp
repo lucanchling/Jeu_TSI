@@ -190,6 +190,7 @@ static void deplacement()
   mat4 rotation_z = matrice_rotation(cam.tr.rotation_euler.z, 0.0f, 0.0f, 1.0f); 
   mat4 rotation =  rotation_y;  // On récupère modifie seulement la composante en y utile pour le calcul des translation (récupération de l'orientation) 
 
+  // Application de la translation en fonction de la touche pressée
   if (up) {
     if(dodge){cam.tr.translation += rotation * vec3(0, 0, -(3*dL));
             //std::cout << cam.tr.translation.z << std::endl;     //juste pour montrer la différence de déplacement avec et sans esquive
@@ -210,55 +211,14 @@ static void deplacement()
     if(dodge)cam.tr.translation += rotation * vec3(3*dL, 0, 0);
     cam.tr.translation += rotation * vec3(dL, 0, 0);
   }
-  // if (left) {
-  //   if(dodge)cam.tr.translation.x-=2*dL;        //test pour savoir si l'esquive est souhaitée ou non
-  //   else cam.tr.translation.x-=dL;
-  //   // Partie réactualisation de la position de la caméra
-  //   if (cam_orientation == 0) cam_posX -= dL;
-  //   else {
-  //     cam_posX -= dL*cos(cam_orientation);
-  //     cam_posZ += dL*sin(cam_orientation);
-  //   }
-  // }
-  // if (right) {
-  //   if(dodge)cam.tr.translation.x+=2*dL;        //test pour savoir si l'esquive est souhaitée ou non
-  //   else cam.tr.translation.x+=dL;
-  //   // Partie réactualisation de la position de la caméra
-  //   if (cam_orientation == 0) cam_posX += dL;
-  //   else {
-  //     cam_posX += dL*cos(cam_orientation);
-  //     cam_posZ -= dL*sin(cam_orientation);
-  //   }
-  // }
-  // if (up) {
-  //   if (dodge)cam.tr.translation.z-=2*dL;       //test pour savoir si l'esquive est souhaitée ou non
-  //   else cam.tr.translation.z-=dL;
-  //   // Partie réactualisation de la position de la caméra
-  //   if (cam_orientation == 0) cam_posZ += dL;
-  //   else {
-  //     cam_posX += dL*cos(cam_orientation);
-  //     cam_posZ += dL*sin(cam_orientation);
-  //   }
-  // }
-  // if (down) {
-  //   if (dodge)cam.tr.translation.z+=2*dL;       //test pour savoir si l'esquive est souhaitée ou non
-  //   else cam.tr.translation.z+=dL;
-  //   // Partie réactualisation de la position de la caméra
-  //   if (cam_orientation == 0) cam_posZ -= dL;
-  //   else {
-  //     cam_posX -= dL*cos(cam_orientation);
-  //     cam_posZ -= dL*sin(cam_orientation);
-  //   }
-  // }
 
-  // // Déplacement sur l'axe des Y pour tester la scène avant implémentation des mouvements de souris 
-  // if (fps_left==true) cam.tr.rotation_euler.y-=d_angle; 
-  // if (fps_right==true) cam.tr.rotation_euler.y+=d_angle;
-  
   // Pour réactualiser le centre de rotation
   cam.tr.rotation_center = cam.tr.translation;
 }
 
+/*****************************************************************************\
+* Fonction pour gérer le saut                                                *
+\*****************************************************************************/
 
 static void sauter()
 { float hauteur_cam=cam.tr.translation.y;
@@ -269,7 +229,9 @@ static void sauter()
     cam.tr.rotation_center = cam.tr.translation;
 }
 
-
+/*****************************************************************************\
+* gestion du relachement des touches clavier                                 *
+\*****************************************************************************/
 
 static void keyboard_relache(unsigned char key, int,int)
 {
@@ -320,7 +282,7 @@ static void special_callback(int key, int, int)
   {
     // Affichage des coord si l'on appui sur F3
     case GLUT_KEY_F3:
-      coord = !coord;
+      coord = !coord; // Basculement de l'état du booléen gérant l'affichage ou non des coordonnées
       break;
   }
 }
@@ -376,6 +338,8 @@ bool CollisionCube(Cube box1,Cube box2)
 /*****************************************************************************\
 * Réactualisation de la taille de la fenêtre in real time                     *
 \*****************************************************************************/
+
+// N'a au final pas été utilisée 
 static void size_actualisation() {
   WIDTH = glutGet(GLUT_WINDOW_WIDTH);
   HEIGHT = glutGet(GLUT_WINDOW_HEIGHT);
@@ -385,38 +349,28 @@ static void size_actualisation() {
 /*****************************************************************************\
 * Rotation via l'utilisation de la souris                                     *
 \*****************************************************************************/
-// bool capture = false; // flag pour remettre à zero ou non les coord
+
 void mouse_cursor(int x, int y) { 
-  // if (capture) {
+    //traitement des coordonnées de la souris pour qu'elles soient cohérentes
     int tempX = x;
     int tempY = HEIGHT - y;
     
-    
-    cam.tr.rotation_euler.y -= 0.001f * d_angle * 2*M_PI*float(HEIGHT / 2 - tempX);
-    
-  //   // Pour actualiser l'orientation de la caméra
-  //   cam_orientation -= (0.001f * d_angle * 2*M_PI*float(HEIGHT / 2 - tempX)); 
-  //   cam_orientation = fmod(cam_orientation,2*M_PI); // Modulo 2pi 
-  //   if (cam_orientation < 0) cam_orientation = 2*M_PI - abs(cam_orientation); // Same value peut importe le sens d'orientation (gauche ou droite)
-    
+    cam.tr.rotation_euler.y -= 0.001f * d_angle * 2*M_PI*float(HEIGHT / 2 - tempX); // Changement d'orientation horizontale
+
+    // Partie gestion orientation verticale :
+
     // Condition pour éviter des déplacements incorrects (si la caméra fait un tour complet etc...)
     if (abs(cam.tr.rotation_euler.x) <= M_PI/2) {
       cam.tr.rotation_euler.x += 0.001f * d_angle * 2*M_PI*float(WIDTH / 2 - tempY);
     }
-    // Lorsqu'elle pointe vers le haut
+    // Lorsqu'elle pointe trop vers le haut
     if (cam.tr.rotation_euler.x <= -M_PI/2) {
       cam.tr.rotation_euler.x += 0.0001;  // On la redécale légèrement vers le bas pour qu'on puisse la redépacer (pour que la condition du dessus soit respectée)
     }
-    // Lorsqu'elle pointe vers le bas
+    // Lorsqu'elle pointe trop vers le bas
     if (cam.tr.rotation_euler.x >= M_PI/2) {
       cam.tr.rotation_euler.x -= 0.0001;
     }
-    //printf("x = %d\ty = %d\n",x,y);
-    //printf("WIDTH = %d  HEIGTH = %d\n",WIDTH,HEIGHT);
-    
-    
-    
-  // }
 }
 
 /*****************************************************************************\
@@ -424,18 +378,18 @@ void mouse_cursor(int x, int y) {
 \*****************************************************************************/
 
 static void affichage_coord(){
-  if (coord) {
-    text_to_draw[0].value = std::to_string(cam.tr.translation.x);
+  if (coord) {  // pour l'affichage des coords
+    text_to_draw[0].value = std::to_string(cam.tr.translation.x); // Affichage coordonnées en X
     text_to_draw[0].bottomLeft = vec2(-0.2, 0.5);
     text_to_draw[0].topRight = vec2(0.2, 1);
     init_text(text_to_draw);
 
     text_to_draw[1]=text_to_draw[0];
-    text_to_draw[1].value = std::to_string(cam.tr.translation.z);
+    text_to_draw[1].value = std::to_string(cam.tr.translation.z); // Affichage coordonnées en Z
     text_to_draw[1].bottomLeft.y = 0.0f;
     text_to_draw[1].topRight.y = 0.5f;
   }
-  else {  // Pour effacer
+  else {  // Pour effacer l'affichage
     text_to_draw[0].value = " ";
     text_to_draw[0].bottomLeft = vec2(-0.2, 0.5);
     text_to_draw[0].topRight = vec2(0.2, 1);
@@ -453,9 +407,11 @@ static void affichage_coord(){
 \*****************************************************************************/
 
 static void jeu(){
-  if ((nb_vies>0) && (end == false)) {
-    //std::cout << "\x1B[2J\x1B[H"; // Pour clear
-    //printf("Nombre de vie : %d\n",nb_vies);
+  // Conditions pour que le joueur puisse continuer de jouer
+  if ((nb_vies>0) && (end == false)) {  // S'il a encore des vies ou qu'il n'a pas encore franchi la ligne d'arrivée
+    // Affichage du nombre de vie sur le terminal    
+    std::cout << "\x1B[2J\x1B[H"; // Pour clear
+    printf("Nombre de vie : %d\n",nb_vies);
   }
 
   // fin du jeu
